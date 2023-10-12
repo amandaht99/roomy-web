@@ -1,10 +1,11 @@
 "use client";
 import Image from "next/image";
-import { Box, Center, Flex, Stack } from "@chakra-ui/react";
+import { Box, Center, Flex, Menu, Spacer, Stack } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { Divider } from "@chakra-ui/react";
 import LogoPng from "../../public/images/roomylogo.png";
-import { Rowdies } from "next/font/google";
+import MyMenu from "@/components/menu"
+
 
 export default function Header() {
   return (
@@ -39,8 +40,11 @@ export default function Header() {
         <Link href="/swaps">Swaps </Link>
         <Link href="/profile">Profile </Link>
       </Flex>
-      <Flex>
-        
+      <Spacer/>
+      
+      <Spacer/>
+      <Flex padding={"7px"}>
+        <MyMenu />
       </Flex>
     </Flex>
   );

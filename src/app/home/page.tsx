@@ -17,7 +17,7 @@ import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 
 function Home() {
   return (
-    <Stack spacing={3} padding={"30px"} border={"1px"} borderColor={"purple"}>
+    <Stack spacing={3} padding={"30px"}>
       <Stack spacing={1} padding={"20px"}>
         <Flex align={"stretch"}>
           <Text fontSize="2xl">You might like </Text>
@@ -27,7 +27,7 @@ function Home() {
             <IconButton aria-label="Paginate right" icon={<AiOutlineRight />} />
           </HStack>
         </Flex>
-        <HStack spacing={7} border={"1px"} borderColor={"blue"}>
+        <HStack spacing={7}>
           <MyCard />
           <MyCard />
           <MyCard />
@@ -41,9 +41,16 @@ function Home() {
           })} */}
         </HStack>
       </Stack>
-      <Stack spacing={1} padding={"20px"} border={"1px"} borderColor={"red"}>
-        <Text fontSize="2xl">Your bookmarks </Text>
-        <HStack spacing={7} border={"1px"} borderColor={"blue"}>
+      <Stack spacing={1} padding={"20px"}>
+        <Flex align={"stretch"}>
+          <Text fontSize="2xl">Your bookmarks </Text>
+          <Spacer />
+          <HStack>
+            <IconButton aria-label="Paginate left" icon={<AiOutlineLeft />} />
+            <IconButton aria-label="Paginate right" icon={<AiOutlineRight />} />
+          </HStack>
+        </Flex>
+        <HStack spacing={7}>
           <MyCard />
           <MyCard />
           <MyCard />
