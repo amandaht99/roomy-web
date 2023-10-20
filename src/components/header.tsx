@@ -5,6 +5,8 @@ import { Link } from "@chakra-ui/next-js";
 import { Divider } from "@chakra-ui/react";
 import LogoPng from "../../public/images/roomylogo.png";
 import MyMenu from "@/components/menu"
+import SearchButton from "@/components/search-button";
+
 
 
 export default function Header() {
@@ -41,7 +43,7 @@ export default function Header() {
         <Link href="/profile">Profile </Link>
       </Flex>
       <Spacer/>
-      
+      <SearchButton />
       <Spacer/>
       <Flex padding={"7px"}>
         <MyMenu />

@@ -19,7 +19,7 @@ export default function MyMenu() {
         aria-label="Options"
         icon={<HamburgerIcon />}
         variant="outline"
-        border={"1px"}
+        // border={"1px"}
         stroke={"0.5px"}
         backgroundColor={"lightgrey"}
       />
