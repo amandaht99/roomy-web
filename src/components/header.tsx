@@ -39,7 +39,7 @@ export default function Header() {
         justifyContent={"flex-start"}
       >
         <Link href="/home">Home </Link>
-        <Link href="/swaps">Swaps </Link>
+        <Link href="/trips">Trips </Link>
         <Link href="/profile">Profile </Link>
       </Flex>
       <Spacer/>
