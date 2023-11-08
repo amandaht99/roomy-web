@@ -1,15 +1,14 @@
 "use client";
-// Profile.js
 import { Box, Heading, VStack, SimpleGrid, Container } from "@chakra-ui/react";
 import { extendTheme, ChakraProvider } from "@chakra-ui/react";
 import PropertyInfo from "../../components/property-info";
 import UserInfo from "../../components/user-info";
 
 const property = {
-  image: [
-    "https://via.placeholder.com/300",
-    "https://via.placeholder.com/300",
-    "https://via.placeholder.com/300",
+  images: [
+    "https://cdn.apartmenttherapy.info/image/upload/v1619013756/at/house%20tours/2021-04/Erin%20K/KERR-130-CLARKSON-2R-01-020577-EDIT-WEB.jpg",
+    "https://www.mastrid.com/wp-content/uploads/2021/02/DepaSantaCatalina.jpg",
+    "https://dom.com.cy/upload/resize_cache/iblock/7cb/870_654_2/7cb9955a62fb012942910a0882e3cadd.jpg",
   ],
   name: "Beautiful Apartment",
   description:
@@ -41,6 +40,8 @@ const colors = {
 const theme = extendTheme({
   colors,
 });
+
+fetch("https://");
 
 export default function Profile() {
   return (
