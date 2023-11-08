@@ -25,7 +25,15 @@ const variants = {
   show: { opacity: 1 },
 };
 
-const PropertyInfo = ({ property }) => {
+type PropertyType = {
+    images: string[];
+    name: string;
+    description: string;
+    location: string;
+    reviews: string[];
+};
+
+const PropertyInfo = ({ property }: { property: PropertyType }) => {
   return (
     <MotionBox
       p={5}
@@ -38,9 +46,6 @@ const PropertyInfo = ({ property }) => {
       whileHover={{ y: -10 }}
     >
       <VStack align="start" spacing={5}>
-        <Skeleton
-          isLoaded={property && property.images && property.images.length}
-        >
           <Carousel showThumbs={false}>
             {property &&
               property.images &&
@@ -50,7 +55,6 @@ const PropertyInfo = ({ property }) => {
                 </div>
               ))}
           </Carousel>
-        </Skeleton>
         <Heading as="h2" size="lg" color="#F13B07">
           {property.name}
         </Heading>
