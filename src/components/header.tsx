@@ -4,10 +4,9 @@ import { Box, Center, Flex, Menu, Spacer, Stack } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
 import { Divider } from "@chakra-ui/react";
 import LogoPng from "../../public/images/roomylogo.png";
-import MyMenu from "@/components/menu"
+import MyMenu from "@/components/menu";
 import SearchButton from "@/components/search-button";
-
-
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 export default function Header() {
   return (
@@ -15,17 +14,11 @@ export default function Header() {
       direction={"row"}
       justifyContent="flex-start"
       alignItems="center"
-      borderBottom="thin"
+      borderBottom="1px"
       gap={20}
-      border={"1px"}
-      borderColor={"red"}
+      borderColor={"black"}
     >
-      <Flex
-        direction={"column"}
-        justifyContent="center"
-        border={"1px"}
-        borderColor={"purple"}
-      >
+      <Flex direction={"column"} justifyContent="center">
         <Link href={"/"}>
           <Image src={LogoPng} alt="Roomy Logo" width={160} />
         </Link>
@@ -33,19 +26,26 @@ export default function Header() {
       <Flex
         direction={"row"}
         gap={20}
-        border={"1px"}
-        borderColor={"pink"}
         alignItems={"center"}
         justifyContent={"flex-start"}
       >
-        <Link href="/home">Home </Link>
-        <Link href="/trips">Trips </Link>
-        <Link href="/profile">Profile </Link>
+        <Link href="/home">Home</Link>
+        <Link href="/trips">Trips</Link>
+        <Link href="/profile">Profile</Link>
       </Flex>
-      <Spacer/>
+      <Spacer />
       <SearchButton />
-      <Spacer/>
-      <Flex padding={"7px"}>
+      <Spacer />
+      <Flex
+        padding={"7px"}
+        gap={"7px"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <SignedIn>
+          {/* If the user is signed in, user-button will be displayed*/}
+          <UserButton />
+        </SignedIn>
         <MyMenu />
       </Flex>
     </Flex>

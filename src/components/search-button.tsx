@@ -71,10 +71,6 @@ export default function SearchButton() {
           <ModalHeader>Find a Swap</ModalHeader>
           <ModalCloseButton />
 
-          <Stack padding={"25px"}>
-            <Progress value={20} size="md" colorScheme="red" />
-          </Stack>
-
           <form onSubmit={handleSubmit(fetchFlats)}>
             <ModalBody>
               <Stack>
@@ -158,7 +154,8 @@ export default function SearchButton() {
             <ModalFooter>
               <Button
                 mt={4}
-                colorScheme="teal"
+                backgroundColor={"brand.900"}
+                textColor={"white"}
                 isLoading={isSubmitting}
                 type="submit"
               >
