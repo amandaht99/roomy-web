@@ -1,8 +1,19 @@
 "use client";
-import { Box, Heading, VStack, SimpleGrid, Container } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  VStack,
+  SimpleGrid,
+  Container,
+  Spinner,
+  Flex,
+  Stack,
+} from "@chakra-ui/react";
 import { extendTheme, ChakraProvider } from "@chakra-ui/react";
 import PropertyInfo from "../../components/property-info";
-import UserInfo from "../../components/user-info";
+import { useUser } from "@clerk/clerk-react";
+
+import NotsignedIn from "@/components/not-signedIn";
 
 const property = {
   images: [
@@ -21,14 +32,14 @@ const property = {
   ],
 };
 
-const user = {
-  name: "Jane Doe",
-  description:
-    "Some brief description about the user. This might include their interests, languages spoken etc.",
-  email: "jane.doe@example.com",
-  phone: "+123456789",
-  profilePicture: "",
-};
+// const user = {
+//   name: "Jane Doe",
+//   description:
+//     "Some brief description about the user. This might include their interests, languages spoken etc.",
+//   email: "jane.doe@example.com",
+//   phone: "+123456789",
+//   profilePicture: "",
+// };
 
 // Define color scheme
 const colors = {
@@ -41,24 +52,30 @@ const theme = extendTheme({
   colors,
 });
 
-fetch("https://");
-
 export default function Profile() {
+  const { isSignedIn, isLoaded, user } = useUser();
+
+  if (!isLoaded) return <Spinner />;
+
+  if (!isSignedIn) {
+    return <NotsignedIn />;
+  }
+
   return (
-    <ChakraProvider theme={theme}>
-      <Box bg="white" color="black">
-        <Container maxW="container.xl" py={10}>
-          <VStack spacing={8} align="start">
-            <Heading as="h1" size="2xl" color="brand.900">
-              Property Profile
-            </Heading>
-            <SimpleGrid columns={{ base: 1, md: 2 }} spacing={10} mt={5}>
-              <PropertyInfo property={property} />
-              <UserInfo user={user} />
-            </SimpleGrid>
-          </VStack>
-        </Container>
-      </Box>
-    </ChakraProvider>
+    <Container maxW="container.xl" py={10}>
+      <VStack spacing={8} align="start">
+        <Heading as="h1" size="2xl" color="brand.900">
+          Property Profile
+        </Heading>
+        <Stack spacing={1} padding={"20px"}>
+          <Heading as="h2" size="xl" color="black">
+            Your Place
+          </Heading>
+          <Flex maxW={900}>
+            <PropertyInfo />
+          </Flex>
+        </Stack>
+      </VStack>
+    </Container>
   );
 }
