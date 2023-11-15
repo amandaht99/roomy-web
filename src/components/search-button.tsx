@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { SearchIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
@@ -15,43 +14,77 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
-  Skeleton,
   Stack,
   FormControl,
-  FormErrorMessage,
   FormLabel,
   Input,
   Spacer,
   Flex,
+  useToast,
 } from "@chakra-ui/react";
-import { Progress } from "@chakra-ui/react";
+import axios from "axios";
+import { useProperties } from "@/context/properties-context";
+
+interface SearchFormData {
+  city: string;
+  hometown: string;
+  dateFrom: Date;
+  dateTo: Date;
+}
 
 export default function SearchButton() {
+  const { setProperties, setFiltersApplied } = useProperties();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
     handleSubmit,
     register,
     control,
     formState: { errors, isSubmitting },
-  } = useForm();
+  } = useForm<SearchFormData>();
+  const toast = useToast();
 
-  const [date, setDate] = useState(new Date());
+  async function fetchFlats(data: SearchFormData) {
+    try {
+      const parsedData = {
+        city: data.city,
+        dateFrom: data.dateFrom,
+        dateTo: data.dateTo,
+        hometown: data.hometown,
+      };
 
-  function fetchFlats(values) {
-    console.log("fetching flats now with values:", values);
+      const response = await axios.post(
+        `http://localhost:8080/v1/flats/search`,
+        { filters: parsedData }
+      );
 
-    // Simulates a request, replace this with your actual request
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve("Success");
-      }, 2000);
-    })
-      .then(() => {
-        onClose(); // Close the modal here after the request is done
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+      setProperties(response.data);
+
+      setFiltersApplied(true);
+
+      onClose();
+
+      // A success toast
+      toast({
+        title: "Filter applied.",
+        description: "The filter request was successful.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
       });
+    } catch (e) {
+      console.error(e);
+      // An erorr toast for error handling
+      toast({
+        title: "Failed to apply filters.",
+        description:
+          "There was an error processing the filter request. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    }
   }
 
   return (
@@ -74,7 +107,7 @@ export default function SearchButton() {
           <form onSubmit={handleSubmit(fetchFlats)}>
             <ModalBody>
               <Stack>
-                <FormControl isInvalid={errors.name}>
+                <FormControl isInvalid={!!errors?.city}>
                   <FormLabel htmlFor="city">I want to stay in ...</FormLabel>
                   <Input
                     id="city"
@@ -82,10 +115,12 @@ export default function SearchButton() {
                     {...register("city", { required: "City is required" })}
                   />
                   {errors.city && <p>{errors.city.message}</p>}
+                </FormControl>
 
-                  <Spacer height={"20px"} />
+                <Spacer height={"20px"} />
 
-                  <FormLabel htmlFor="city">
+                <FormControl isInvalid={!!errors?.hometown}>
+                  <FormLabel htmlFor="hometown">
                     and could offer a place in ...
                   </FormLabel>
 
@@ -97,13 +132,15 @@ export default function SearchButton() {
                     })}
                   />
                   {errors.hometown && <p>{errors.hometown.message}</p>}
+                </FormControl>
 
-                  <Spacer height={"20px"} />
+                <Spacer height={"20px"} />
 
-                  <FormLabel htmlFor="city">from ...</FormLabel>
+                <FormControl isInvalid={!!errors?.dateFrom}>
+                  <FormLabel htmlFor="dateFrom">from ...</FormLabel>
                   <Flex>
                     <Controller
-                      name="fromDate"
+                      name="dateFrom"
                       control={control}
                       rules={{ required: "Date selection is required" }}
                       render={({ field }) => (
@@ -121,14 +158,17 @@ export default function SearchButton() {
                         />
                       )}
                     />
-                    {errors.fromDate && <p>{errors.fromDate.message}</p>}
+                    {errors.dateFrom && <p>{errors.dateFrom.message}</p>}
                   </Flex>
-                  <Spacer height={"20px"} />
+                </FormControl>
 
-                  <FormLabel htmlFor="city">until ...</FormLabel>
+                <Spacer height={"20px"} />
+
+                <FormControl isInvalid={!!errors?.dateTo}>
+                  <FormLabel htmlFor="dateTo">until ...</FormLabel>
 
                   <Controller
-                    name="toDate"
+                    name="dateTo"
                     control={control}
                     rules={{ required: "Date selection is required" }}
                     render={({ field }) => (
@@ -146,7 +186,7 @@ export default function SearchButton() {
                       />
                     )}
                   />
-                  {errors.toDate && <p>{errors.toDate.message}</p>}
+                  {errors.dateTo && <p>{errors.dateTo.message}</p>}
                 </FormControl>
               </Stack>
             </ModalBody>

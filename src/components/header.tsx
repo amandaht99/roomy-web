@@ -7,8 +7,12 @@ import LogoPng from "../../public/images/roomylogo.png";
 import MyMenu from "@/components/menu";
 import SearchButton from "@/components/search-button";
 import { SignedIn, UserButton } from "@clerk/nextjs";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Header() {
+  const router = useRouter();
+  const pathname = usePathname();
+
   return (
     <Flex
       direction={"row"}
@@ -34,7 +38,8 @@ export default function Header() {
         <Link href="/profile">Profile</Link>
       </Flex>
       <Spacer />
-      <SearchButton />
+      {/* If user is on Home page Search button will be displayed */}
+      {pathname === "/home" && <SearchButton />}
       <Spacer />
       <Flex
         padding={"7px"}
@@ -43,8 +48,8 @@ export default function Header() {
         alignItems={"center"}
       >
         <SignedIn>
-          {/* If the user is signed in, user-button will be displayed*/}
-          <UserButton />
+          {/* If the user is signed in, user-button will be displayed */}
+          <UserButton afterSignOutUrl="/" showName />
         </SignedIn>
         <MyMenu />
       </Flex>

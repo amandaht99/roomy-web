@@ -1,5 +1,6 @@
 "use client";
 
+import { PropertiesProvider } from "@/context/properties-context";
 import { CacheProvider } from "@chakra-ui/next-js";
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { ClerkProvider } from "@clerk/nextjs";
@@ -26,7 +27,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
             },
           }}
         >
-          {children}
+          <PropertiesProvider>{children}</PropertiesProvider>
         </ClerkProvider>
       </ChakraProvider>
     </CacheProvider>

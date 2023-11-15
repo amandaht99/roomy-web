@@ -15,6 +15,7 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { Property } from "./property-info";
 import { Dispatch, SetStateAction } from "react";
@@ -24,7 +25,7 @@ import { parseISO } from "date-fns";
 interface UploadFormData {
   description?: string;
   rooms?: string;
-  images?: string[];
+  images: string[] | [];
   address: { street: string; city: string; country: string };
   dateFrom: string;
   dateTo: string;
@@ -37,7 +38,15 @@ const FlatForm = (props: {
 }) => {
   const { setProperty, userId } = props;
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { handleSubmit, control } = useForm<UploadFormData>();
+  const { handleSubmit, control } = useForm<UploadFormData>({
+    defaultValues: { images: [], address: {} },
+  });
+
+  const toast = useToast();
+
+  function convertToUppercase(string: string) {
+    return string[0].toUpperCase() + string.substring(1);
+  }
 
   const onSubmit = async (data: UploadFormData) => {
     if (!userId) return;
@@ -47,6 +56,13 @@ const FlatForm = (props: {
         ...data,
         dateFrom: parseISO(data.dateFrom),
         dateTo: parseISO(data.dateTo),
+        swapWithCity: convertToUppercase(data.swapWithCity),
+        address: {
+          ...data.address,
+          street: convertToUppercase(data.address.street),
+          city: convertToUppercase(data.address.city),
+          country: convertToUppercase(data.address.country),
+        },
       };
 
       const response = await axios.post(
@@ -56,8 +72,28 @@ const FlatForm = (props: {
 
       setProperty(response.data);
       onClose();
+
+      // A success toast
+      toast({
+        title: "Flat uploaded.",
+        description: "Your flat has been successfully uploaded.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
     } catch (e) {
       console.error(e);
+      // An erorr toast for error handling
+      toast({
+        title: "Failed to upload flat.",
+        description:
+          "There was an error uploading your flat. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
     }
   };
 
