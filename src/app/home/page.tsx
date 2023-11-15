@@ -46,7 +46,7 @@ function Home() {
 
   const fetchData = async () => {
     const result = await axios.get(
-      `http://localhost:8080/v1/flats/all/${userId || null}`
+      `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/all/${userId || null}`
     );
     setFiltersApplied(false);
     setProperties(result.data);

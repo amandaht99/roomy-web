@@ -53,7 +53,7 @@ export default function SearchButton() {
       };
 
       const response = await axios.post(
-        `http://localhost:8080/v1/flats/search`,
+        `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/search`,
         { filters: parsedData }
       );
 

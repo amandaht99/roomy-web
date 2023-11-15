@@ -57,7 +57,7 @@ const PropertyInfo = () => {
     if (!userId) return;
 
     const response = await axios.get(
-      `http://localhost:8080/v1/flats/user/${userId}`
+      `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/user/${userId}`
     );
     console.log(response.data);
     setProperty(response.data);
@@ -67,7 +67,7 @@ const PropertyInfo = () => {
 
   const deleteFlat = async (property: Property) => {
     try {
-      await axios.delete(`http://localhost:8080/v1/flats/${property.id}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/${property.id}`);
       // If delete operation is successful, remove the property from the state
       setProperty(null);
 
@@ -96,7 +96,7 @@ const PropertyInfo = () => {
   // call when component renders
   useEffect(() => {
     getFlat(userId);
-  }, []);
+  }, [userId]);
 
   if (!property) {
     return (
