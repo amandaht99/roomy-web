@@ -10,9 +10,13 @@ import {
   Button,
   Flex,
   Stack,
+  ToastProvider,
 } from "@chakra-ui/react";
 import { FaEuroSign, FaHome, FaGlobeAmericas, FaUsers } from "react-icons/fa";
-
+import Link from "next/link";
+import { useToast } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { useUser } from "@clerk/clerk-react";
 import { motion } from "framer-motion";
 
 // Framer motion variants for the animation
@@ -24,6 +28,26 @@ const variants = {
 const MotionBox = motion(Box);
 
 export default function Page() {
+  const toast = useToast();
+  const router = useRouter();
+  const { isSignedIn } = useUser();
+
+  const handleButtonClick = () => {
+    if (isSignedIn) {
+      toast({
+        title: "You are already signed in.",
+        description: "Redirecting to your home page.",
+        status: "info",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+      router.push("/home");
+    } else {
+      router.push("/sign-up");
+    }
+  };
+
   return (
     <Container maxW="container.xl" py={10}>
       <VStack spacing={8} align="start">
@@ -93,8 +117,15 @@ export default function Page() {
           ))}
         </SimpleGrid>
 
-        <Button colorScheme="red" size="lg">
-          Join Roomy today - Travel more, spend less!
+        <Button
+          backgroundColor={"brand.900"}
+          textColor={"white"}
+          size="lg"
+          onClick={handleButtonClick}
+        >
+          <Link href="/sign-in">
+            Join Roomy today - Travel more, spend less!
+          </Link>
         </Button>
       </VStack>
     </Container>

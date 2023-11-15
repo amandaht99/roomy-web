@@ -10,6 +10,9 @@ import {
   MenuDivider,
   IconButton,
 } from "@chakra-ui/react";
+import Link from "next/link";
+
+import { SignedOut } from "@clerk/nextjs";
 
 export default function MyMenu() {
   return (
@@ -24,11 +27,17 @@ export default function MyMenu() {
         backgroundColor={"lightgrey"}
       />
       <MenuList>
-        <MenuGroup title="Profile">
-          <MenuItem>Sign up</MenuItem>
-          <MenuItem>Log in</MenuItem>
-        </MenuGroup>
-        <MenuDivider />
+        <SignedOut>
+          <MenuGroup title="Profile">
+            <Link href="/sign-up">
+              <MenuItem>Sign up</MenuItem>
+            </Link>
+            <Link href="/sign-in">
+              <MenuItem>Sign in</MenuItem>
+            </Link>
+          </MenuGroup>
+          <MenuDivider />
+        </SignedOut>
         <MenuGroup title="Other">
           <MenuItem>Add your home</MenuItem>
           <MenuItem>Help</MenuItem>

@@ -21,36 +21,7 @@ const property = {
     "https://www.mastrid.com/wp-content/uploads/2021/02/DepaSantaCatalina.jpg",
     "https://dom.com.cy/upload/resize_cache/iblock/7cb/870_654_2/7cb9955a62fb012942910a0882e3cadd.jpg",
   ],
-  name: "Beautiful Apartment",
-  description:
-    "Some description about the property. This could include details about the location, amenities, size etc.",
-  location: "Property Location, City",
-  reviews: [
-    "Great location, near to several tourist attractions.",
-    "The apartment was clean and spacious.",
-    "I loved the amenities provided.",
-  ],
-};
-
-// const user = {
-//   name: "Jane Doe",
-//   description:
-//     "Some brief description about the user. This might include their interests, languages spoken etc.",
-//   email: "jane.doe@example.com",
-//   phone: "+123456789",
-//   profilePicture: "",
-// };
-
-// Define color scheme
-const colors = {
-  brand: {
-    900: "#F13B07",
-  },
-};
-
-const theme = extendTheme({
-  colors,
-});
+}
 
 export default function Profile() {
   const { isSignedIn, isLoaded, user } = useUser();
@@ -58,7 +29,7 @@ export default function Profile() {
   if (!isLoaded) return <Spinner />;
 
   if (!isSignedIn) {
-    return <NotsignedIn />;
+    return <NotsignedIn />; 
   }
 
   return (
