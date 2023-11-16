@@ -39,8 +39,9 @@ export default function MyMenu() {
           <MenuDivider />
         </SignedOut>
         <MenuGroup title="Other">
-          <MenuItem>Add your home</MenuItem>
-          <MenuItem>Help</MenuItem>
+          <Link href="/help">
+            <MenuItem>Help</MenuItem>
+          </Link>
         </MenuGroup>
       </MenuList>
     </Menu>
