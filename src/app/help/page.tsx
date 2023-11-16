@@ -11,11 +11,8 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
 
 export default function HelpPage() {
-  const router = useRouter();
-
   return (
     <Container maxW="container.xl" py={10}>
       <VStack spacing={8} align="start">
@@ -24,8 +21,8 @@ export default function HelpPage() {
         </Heading>
         <Text fontSize="lg">
           Here are some frequently asked questions to help you navigate Roomy.
-          If you can't find the answer you're looking for, feel free to contact
-          us.
+          If you cannot find the answer you are looking for, feel free to
+          contact us.
         </Text>
 
         <Accordion allowToggle w="100%">
@@ -43,9 +40,9 @@ export default function HelpPage() {
             </h2>
             <AccordionPanel pb={4}>
               Roomy is a home-swapping platform. You can list your home, find a
-              home you'd like to stay in, choose a time, and arrange a swap with
-              the other homeowner. It's a cost-effective and authentic way to
-              travel.
+              home you would like to stay in, choose a time, and arrange a swap
+              with the other homeowner. It is a cost-effective and authentic way
+              to travel.
             </AccordionPanel>
           </AccordionItem>
 
@@ -62,9 +59,9 @@ export default function HelpPage() {
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              Click on the "Join Roomy today - Travel more, spend less!" button
-              on our landing page. You'll be redirected to the sign-up page
-              where you can create your account.
+              Click on the &quot;Join Roomy today - Travel more, spend
+              less!&quot; button on our landing page. You will be redirected to
+              the sign-up page where you can create your account.
             </AccordionPanel>
           </AccordionItem>
 
@@ -82,8 +79,9 @@ export default function HelpPage() {
             </h2>
             <AccordionPanel pb={4}>
               After signing in, navigate to your profile page and click on
-              "Upload Property". Fill in the details about your home. Once
-              you've completed the form, your home will be listed on Roomy.
+              &quot;Upload Property&quot;. Fill in the details about your home.
+              Once you have completed the form, your home will be listed on
+              Roomy.
             </AccordionPanel>
           </AccordionItem>
 
@@ -119,8 +117,8 @@ export default function HelpPage() {
               </AccordionButton>
             </h2>
             <AccordionPanel pb={4}>
-              Once you've found a home you're interested in, you can bookmark it
-              or you can send a swap request to the homeowner. If they're
+              Once you have found a home you are interested in, you can bookmark
+              it or you can send a swap request to the homeowner. If they are
               interested, you can then arrange the details of the swap.
             </AccordionPanel>
           </AccordionItem>
