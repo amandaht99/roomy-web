@@ -81,7 +81,7 @@ export default function MyCard(props: MyCardProps) {
         </Skeleton>
         <Flex direction={"row"} mt="6" padding={"0px"} align={"stretch"}>
           <Stack>
-            <Text fontSize={"15px"}>
+            <Text fontSize={"15px"} data-cy="address-text">
               {property.address.street}, {property.address.city}
             </Text>
             <Flex>

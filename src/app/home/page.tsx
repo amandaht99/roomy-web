@@ -101,6 +101,7 @@ function Home() {
         {filtersApplied ? (
           <Text ml={4}>
             <Tag
+              data-cy="filters-applied-tag"
               size="lg"
               borderRadius="full"
               variant="solid"

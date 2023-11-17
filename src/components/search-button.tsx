@@ -90,6 +90,7 @@ export default function SearchButton() {
   return (
     <>
       <Button
+        data-cy="search-button"
         rightIcon={<SearchIcon />}
         onClick={onOpen}
         textColor={"white"}
@@ -111,6 +112,7 @@ export default function SearchButton() {
                   <FormLabel htmlFor="city">I want to stay in ...</FormLabel>
                   <Input
                     id="city"
+                    data-cy="city-input"
                     placeholder="Search city"
                     {...register("city", { required: "City is required" })}
                   />
@@ -126,6 +128,7 @@ export default function SearchButton() {
 
                   <Input
                     id="hometown"
+                    data-cy="hometown-input"
                     placeholder="Search city"
                     {...register("hometown", {
                       required: "Hometown is required",
@@ -151,9 +154,11 @@ export default function SearchButton() {
                           minDate={new Date()}
                           showTimeSelect={false}
                           todayButton="Today"
-                          // customInput={<StyledInput errors={errors} />}
+                          customInput={
+                            <Input w={"100%"} data-cy="dateFrom-input" />
+                          }
                           dropdownMode="select"
-                          placeholderText="Choose date"
+                          placeholderText="Choose start date"
                           shouldCloseOnSelect
                         />
                       )}
@@ -179,9 +184,11 @@ export default function SearchButton() {
                         minDate={new Date()}
                         showTimeSelect={false}
                         todayButton="Today"
-                        // customInput={<StyledInput errors={errors} />}
+                        customInput={
+                          <Input w={"100%"} data-cy="dateTo-input" />
+                        }
                         dropdownMode="select"
-                        placeholderText="Choose date"
+                        placeholderText="Choose end date"
                         shouldCloseOnSelect
                       />
                     )}
@@ -193,6 +200,7 @@ export default function SearchButton() {
 
             <ModalFooter>
               <Button
+                data-cy="submit-button"
                 mt={4}
                 backgroundColor={"brand.900"}
                 textColor={"white"}

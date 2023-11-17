@@ -1,0 +1,20 @@
+{
+  "id": 1,
+  "ownerId": "abc123",
+  "dateFrom": "2022-01-01",
+  "dateTo": "2022-12-31",
+  "description": "Beautiful 2-bedroom apartment in the heart of the city.",
+  "images": [
+    "https://example.com/images/property1/image1.jpg",
+    "https://example.com/images/property1/image2.jpg"
+  ],
+  "rooms": 2,
+  "squareMeters": 80,
+  "address": {
+    "city": "New York",
+    "country": "USA",
+    "street": "123 Broadway"
+  },
+  "swapWithCity": "San Francisco",
+  "createdAt": "2021-12-01T00:00:00Z"
+}

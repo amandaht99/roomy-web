@@ -2,6 +2,7 @@
   "name": "roomy-web",
   "version": "0.1.0",
   "private": true,
+  "module": "es2015",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -32,6 +33,7 @@
     "@types/react": "latest",
     "@types/react-datepicker": "^4.19.0",
     "@types/react-dom": "latest",
+    "cypress": "^13.5.1",
     "eslint": "latest",
     "eslint-config-next": "latest",
     "typescript": "latest"
