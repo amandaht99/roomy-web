@@ -1,8 +1,7 @@
 "use client";
 import Image from "next/image";
-import { Box, Center, Flex, Menu, Spacer, Stack } from "@chakra-ui/react";
+import { Flex, Spacer } from "@chakra-ui/react";
 import { Link } from "@chakra-ui/next-js";
-import { Divider } from "@chakra-ui/react";
 import LogoPng from "../../public/images/roomylogo.png";
 import MyMenu from "@/components/menu";
 import SearchButton from "@/components/search-button";
@@ -13,6 +12,7 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
 
+  //Main Header component contains navigation, search and menu
   return (
     <Flex
       direction={"row"}

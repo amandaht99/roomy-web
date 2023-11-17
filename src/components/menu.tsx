@@ -14,6 +14,7 @@ import Link from "next/link";
 
 import { SignedOut } from "@clerk/nextjs";
 
+//MyMenu is a component that renders a dropdown menu
 export default function MyMenu() {
   return (
     <Menu>

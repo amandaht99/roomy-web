@@ -6,14 +6,10 @@ import {
   VStack,
   Image,
   Icon,
-  Skeleton,
-  List,
-  ListItem,
-  ListIcon,
   Button,
   useToast,
 } from "@chakra-ui/react";
-import { FaMapMarkerAlt, FaStar, FaPen, FaTrash } from "react-icons/fa";
+import { FaMapMarkerAlt, FaTrash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from "react-responsive-carousel";
@@ -53,6 +49,7 @@ const PropertyInfo = () => {
   const [property, setProperty] = useState<Property | null>(null);
   const { userId } = useAuth();
 
+  // Function to fetch the property details of the user
   async function getFlat(userId: string | null | undefined) {
     if (!userId) return;
 
@@ -65,9 +62,12 @@ const PropertyInfo = () => {
 
   const toast = useToast();
 
+  // Function to delete the user's property
   const deleteFlat = async (property: Property) => {
     try {
-      await axios.delete(`${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/${property.id}`);
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/${property.id}`
+      );
       // If delete operation is successful, remove the property from the state
       setProperty(null);
 
@@ -93,11 +93,12 @@ const PropertyInfo = () => {
     }
   };
 
-  // call when component renders
+  // Fetch the property when the component mounts
   useEffect(() => {
     getFlat(userId);
   }, [userId]);
 
+  // If user does not have a property, display a message and a form to add a property
   if (!property) {
     return (
       <VStack>
@@ -107,6 +108,7 @@ const PropertyInfo = () => {
     );
   }
 
+  // Display the property details
   return (
     <MotionBox
       p={5}

@@ -32,6 +32,7 @@ interface UploadFormData {
   swapWithCity: string;
 }
 
+//Flatform is a component for uploading property information
 const FlatForm = (props: {
   setProperty: Dispatch<SetStateAction<Property | null>>;
   userId?: string | null;
@@ -51,6 +52,7 @@ const FlatForm = (props: {
   const onSubmit = async (data: UploadFormData) => {
     if (!userId) return;
 
+    // Parsing the data and making a POST request to the server
     try {
       const parsedData = {
         ...data,
@@ -97,6 +99,7 @@ const FlatForm = (props: {
     }
   };
 
+  // Rendering the component
   return (
     <>
       <Button onClick={onOpen} textColor={"white"} backgroundColor="#F13B07">

@@ -3,7 +3,6 @@ import { useForm, Controller } from "react-hook-form";
 import { SearchIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
 import {
   useDisclosure,
   Button,
@@ -25,6 +24,7 @@ import {
 import axios from "axios";
 import { useProperties } from "@/context/properties-context";
 
+// SearchFormData type defines the structure of the search form data
 interface SearchFormData {
   city: string;
   hometown: string;
@@ -32,6 +32,7 @@ interface SearchFormData {
   dateTo: Date;
 }
 
+// Displays a search button and a modal form for searching properties
 export default function SearchButton() {
   const { setProperties, setFiltersApplied } = useProperties();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -43,6 +44,8 @@ export default function SearchButton() {
   } = useForm<SearchFormData>();
   const toast = useToast();
 
+  // FetchFlats function sends a POST request to the backend with the search filters, 
+  // then updates the properties in the context and shows a toast notification
   async function fetchFlats(data: SearchFormData) {
     try {
       const parsedData = {
@@ -74,7 +77,7 @@ export default function SearchButton() {
       });
     } catch (e) {
       console.error(e);
-      // An erorr toast for error handling
+      // An error toast for error handling
       toast({
         title: "Failed to apply filters.",
         description:
@@ -87,6 +90,7 @@ export default function SearchButton() {
     }
   }
 
+  //The form is used to submit the search filters.
   return (
     <>
       <Button

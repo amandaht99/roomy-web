@@ -2,7 +2,6 @@
 import {
   Box,
   Heading,
-  SimpleGrid,
   Container,
   VStack,
   Spinner,
@@ -10,9 +9,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import MyCard from "@/components/card";
 import { useAuth } from "@clerk/clerk-react";
-
 import NotsignedIn from "@/components/not-signedIn";
 
 // Framer motion variants for the animation
@@ -23,14 +20,19 @@ const variants = {
 
 const MotionBox = motion(Box);
 
+// Trips component displays user's planned trips
 export default function Trips() {
   const { isSignedIn, isLoaded } = useAuth();
 
+  // Shows spinner while loading
   if (!isLoaded) return <Spinner />;
 
+  // If user is not signed in, show NotSignedIn component
   if (!isSignedIn) {
     return <NotsignedIn />;
   }
+
+      // Component layout with message "No Trips planned yet! as this hasnt been developed yet"
   return (
     <Box bg="white" color="black">
       <Container maxW="container.xl" py={10}>

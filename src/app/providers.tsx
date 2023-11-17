@@ -16,6 +16,7 @@ const theme = extendTheme({
   colors,
 });
 
+// Providers component wraps all the context providers used in the application
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
     <CacheProvider>

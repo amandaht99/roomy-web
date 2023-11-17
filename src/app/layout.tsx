@@ -6,11 +6,13 @@ import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// Metadata for the application
 export const metadata: Metadata = {
   title: "Roomy",
   description: "Roomy - travel more, spend less!",
 };
 
+// RootLayout component wraps all pages of the application
 export default function RootLayout({
   children,
 }: {

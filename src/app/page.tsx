@@ -10,7 +10,6 @@ import {
   Button,
   Flex,
   Stack,
-  ToastProvider,
 } from "@chakra-ui/react";
 import { FaEuroSign, FaHome, FaGlobeAmericas, FaUsers } from "react-icons/fa";
 import Link from "next/link";
@@ -27,11 +26,13 @@ const variants = {
 
 const MotionBox = motion(Box);
 
+// Page component is the landing page of the application
 export default function Page() {
   const toast = useToast();
   const router = useRouter();
   const { isSignedIn } = useUser();
 
+  // Handles the click event of the Join Roomy button
   const handleButtonClick = () => {
     if (isSignedIn) {
       toast({
@@ -48,6 +49,7 @@ export default function Page() {
     }
   };
 
+  // Component layout with information about the service and a Join Roomy button
   return (
     <Container maxW="container.xl" py={10}>
       <VStack spacing={8} align="start">

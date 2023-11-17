@@ -3,18 +3,15 @@ import {
   Card,
   CardBody,
   Skeleton,
-  Image,
   Button,
-  CardFooter,
-  Heading,
   Text,
   Icon,
-  IconButton,
   Flex,
   Spacer,
+  Stack,
+  HStack,
+  useToast
 } from "@chakra-ui/react";
-import { Stack, HStack, VStack, useToast } from "@chakra-ui/react";
-
 import { IoIosSwap } from "react-icons/io";
 import { AiTwotoneStar } from "react-icons/ai";
 import { BsDot, BsBookmark, BsBookmarkFill } from "react-icons/bs";
@@ -22,12 +19,14 @@ import { Property } from "./property-info";
 import { format, parseISO } from "date-fns";
 import { useState } from "react";
 
+//Defining the type for the props
 interface MyCardProps {
   property: Property;
   setBookmarkedProperties: React.Dispatch<React.SetStateAction<Property[]>>;
   showInBookmarks?: boolean;
 }
 
+//Card component displays all information about properties
 export default function MyCard(props: MyCardProps) {
   const { property, setBookmarkedProperties, showInBookmarks = false } = props;
 

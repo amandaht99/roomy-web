@@ -12,6 +12,7 @@ import {
   AccordionIcon,
 } from "@chakra-ui/react";
 
+// HelpPage component displays a list of frequently asked questions and their answers
 export default function HelpPage() {
   return (
     <Container maxW="container.xl" py={10}>

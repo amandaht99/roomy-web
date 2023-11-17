@@ -12,8 +12,10 @@ import {
   TagCloseButton,
   TagLabel,
   useToast,
+  Stack,
+  HStack,
+  VStack,
 } from "@chakra-ui/react";
-import { Stack, HStack, VStack } from "@chakra-ui/react";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -21,6 +23,7 @@ import { useAuth } from "@clerk/nextjs";
 import { Property } from "@/components/property-info";
 import { useProperties } from "@/context/properties-context";
 
+// Home component displays a list of properties and allows to paginate through them
 function Home() {
   const { properties, setProperties, filtersApplied, setFiltersApplied } =
     useProperties();
@@ -44,6 +47,7 @@ function Home() {
 
   const { userId } = useAuth();
 
+  // Fetches properties data from the server
   const fetchData = async () => {
     const result = await axios.get(
       `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/all/${userId || null}`
@@ -52,6 +56,7 @@ function Home() {
     setProperties(result.data);
   };
 
+  // Removes filters and fetches all properties
   const removeFilters = async () => {
     fetchData();
     toast({
@@ -64,6 +69,7 @@ function Home() {
     });
   };
 
+  // Fetch data when component mounts
   useEffect(() => {
     fetchData();
   }, []); // Empty array means this effect runs once when the component mounts
@@ -92,6 +98,7 @@ function Home() {
     }
   };
 
+    // Component layout with properties cards and pagination
   return (
     <Container maxW="container.xl" py={10}>
       <VStack spacing={8} align="start">
