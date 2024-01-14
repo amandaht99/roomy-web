@@ -70,10 +70,8 @@ export async function GET(
 
   if (flat?.ownerId) {
     const user = await clerkClient.users.getUser(flat.ownerId);
-    return { ...flat, owner: user };
+    return Response.json({ ...flat, owner: user });
   }
-
-  return null;
 }
 
 // export async function DELETE(
