@@ -8,6 +8,18 @@ import {
   Icon,
   Button,
   useToast,
+  FormControl,
+  FormLabel,
+  Input,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  IconButton,
 } from "@chakra-ui/react";
 import { FaMapMarkerAlt, FaTrash } from "react-icons/fa";
 import { motion } from "framer-motion";
@@ -18,6 +30,9 @@ import axios from "axios";
 import { useAuth } from "@clerk/clerk-react";
 import FlatForm from "./upload-property-button";
 import { format, parseISO } from "date-fns";
+import { useForm, Controller } from "react-hook-form";
+import { EditIcon } from "@chakra-ui/icons";
+import DatePicker from "react-datepicker";
 
 const MotionBox = motion(Box);
 
@@ -81,10 +96,74 @@ const PropertyInfo = () => {
       });
     } catch (error) {
       console.error("Failed to delete the flat:", error);
-      // Optionally, you can also display an error toast here
       toast({
         title: "Failed to delete flat.",
         description: "There was an error deleting your flat. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    }
+  };
+
+  const {
+    isOpen: dateFromIsOpen,
+    onOpen: dateFromOnOpen,
+    onClose: dateFromOnClose,
+  } = useDisclosure();
+  const {
+    isOpen: dateToIsOpen,
+    onOpen: dateToOnOpen,
+    onClose: dateToOnClose,
+  } = useDisclosure();
+  const { control: dateFromControl, getValues: dateFromGetValues } = useForm({
+    defaultValues: {
+      dateFrom: property ? property.dateFrom : "",
+    },
+  });
+  const { control: dateToControl, getValues: dateToGetValues } = useForm({
+    defaultValues: {
+      dateTo: property ? property.dateFrom : "",
+    },
+  });
+
+  const changeDate = async (type, date, onClose) => {
+    if (!property) return;
+
+    try {
+      const formData = {
+        type,
+        date,
+      };
+
+      const response = await axios.put(
+        process.env.NEXT_PUBLIC_DATABASE_URL +
+          "/v1/flats/" +
+          property.id +
+          "/date",
+        formData
+      );
+
+      setProperty(response.data);
+      onClose();
+
+      // A success toast
+      toast({
+        title: "Changes applied.",
+        description: "The dates have been succesfully updated.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
+    } catch (e) {
+      console.error(e);
+      // An erorr toast for error handling
+      toast({
+        title: "Failed to apply changes.",
+        description:
+          "There was an error applying your change. Please try again.",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -144,11 +223,91 @@ const PropertyInfo = () => {
         <Heading size="md" mb={2} fontWeight="bold">
           Availability:
         </Heading>
+
+        <IconButton
+          aria-label="Edit fromDate"
+          icon={<EditIcon />}
+          onClick={dateFromOnOpen}
+          size="sm"
+          variant="outline"
+          data-cy="dateFrom-edit-button"
+        />
+
+        <Modal isOpen={dateFromIsOpen} onClose={dateFromOnClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Edit Begin Date</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl>
+                <FormLabel>Date From</FormLabel>
+                <Controller
+                  name="dateFrom"
+                  control={dateFromControl}
+                  render={({ field }) => <Input type="date" {...field} data-cy={"dateFrom-input"}/>}
+                />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                onClick={() =>
+                  changeDate(
+                    "from",
+                    dateFromGetValues("dateFrom"),
+                    dateFromOnClose
+                  )
+                }
+                data-cy={"dateFrom-submit-button"}
+              >
+                Change Date
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
         <Box bg="gray.100" p={3} rounded="md" width="full" mb={2}>
           <Text fontWeight="medium">
             From: {format(parseISO(property.dateFrom), "dd MMMM yy")}
           </Text>
         </Box>
+
+        <IconButton
+          aria-label="Edit toDate"
+          icon={<EditIcon />}
+          onClick={dateToOnOpen}
+          size="sm"
+          variant="outline"
+          data-cy="dateTo-edit-button"
+        />
+
+        <Modal isOpen={dateToIsOpen} onClose={dateToOnClose}>
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>Edit End Date</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <FormControl>
+                <FormLabel>Date To</FormLabel>
+                <Controller
+                  name="dateTo"
+                  control={dateToControl}
+                  render={({ field }) => <Input type="date" {...field} data-cy={"dateTo-input"}/>}
+                />
+              </FormControl>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                onClick={() =>
+                  changeDate("to", dateToGetValues("dateTo"), dateToOnClose)
+                }
+                data-cy={"dateTo-submit-button"}
+              >
+                Change Date
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+
         <Box bg="gray.100" p={3} rounded="md" width="full">
           <Text fontWeight="medium">
             To: {format(parseISO(property.dateTo), "dd MMMM yy")}
