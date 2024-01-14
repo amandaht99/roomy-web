@@ -68,7 +68,7 @@ const FlatForm = (props: {
       };
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/user/${userId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/flats/user/${userId}`,
         parsedData
       );
 

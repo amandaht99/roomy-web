@@ -50,7 +50,7 @@ function Home() {
   // Fetches properties data from the server
   const fetchData = async () => {
     const result = await axios.get(
-      `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/all/${userId || null}`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/flats/all/${userId || null}`
     );
     setFiltersApplied(false);
     setProperties(result.data);
@@ -98,7 +98,7 @@ function Home() {
     }
   };
 
-    // Component layout with properties cards and pagination
+  // Component layout with properties cards and pagination
   return (
     <Container maxW="container.xl" py={10}>
       <VStack spacing={8} align="start">

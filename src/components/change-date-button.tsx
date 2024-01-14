@@ -51,10 +51,7 @@ export function ChangeDateButton({
       };
 
       const response = await axios.put(
-        process.env.NEXT_PUBLIC_DATABASE_URL +
-          "/v1/flats/" +
-          property.id +
-          "/date",
+        process.env.NEXT_PUBLIC_API_URL + "/api/flats/" + property.id + "/date",
         formData
       );
 

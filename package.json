@@ -16,6 +16,7 @@
     "@clerk/nextjs": "^4.26.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@prisma/client": "^5.8.0",
     "axios": "^1.6.1",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.16.4",
@@ -36,6 +37,7 @@
     "cypress": "^13.5.1",
     "eslint": "latest",
     "eslint-config-next": "latest",
+    "prisma": "^5.8.0",
     "typescript": "latest"
   }
 }

@@ -44,7 +44,7 @@ export default function SearchButton() {
   } = useForm<SearchFormData>();
   const toast = useToast();
 
-  // FetchFlats function sends a POST request to the backend with the search filters, 
+  // FetchFlats function sends a POST request to the backend with the search filters,
   // then updates the properties in the context and shows a toast notification
   async function fetchFlats(data: SearchFormData) {
     try {
@@ -56,7 +56,7 @@ export default function SearchButton() {
       };
 
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/search`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/flats/search`,
         { filters: parsedData }
       );
 

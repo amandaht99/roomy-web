@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Address {
+  id      Int    @id @default(autoincrement())
+  street  String
+  city    String
+  country String
+  flatId  Int    @unique
+  flat    Flat   @relation(fields: [flatId], references: [id], onDelete: Cascade)
+
+  @@index([flatId], map: "flatId")
+}
+
+model Flat {
+  id                        Int      @id @default(autoincrement())
+  ownerId                   String   @unique
+  description               String?
+  squareMeters              Int?
+  rooms                     Int?
+  images                    String[]
+  createdAt                 DateTime @default(now())
+  dateFrom                  DateTime
+  dateTo                    DateTime
+  swapWithCity              String
+  imagesPaths               String[]
+  address                   Address?
+  Swap_Swap_swappeeIdToFlat Swap[]   @relation("Swap_swappeeIdToFlat")
+  Swap_Swap_swapperIdToFlat Swap[]   @relation("Swap_swapperIdToFlat")
+
+  @@index([ownerId], map: "ownerId")
+}
+
+model Swap {
+  id                        Int      @id @default(autoincrement())
+  state                     String
+  swapperId                 Int
+  swappeeId                 Int
+  createdAt                 DateTime @default(now())
+  Flat_Swap_swappeeIdToFlat Flat     @relation("Swap_swappeeIdToFlat", fields: [swappeeId], references: [id], onDelete: Cascade)
+  Flat_Swap_swapperIdToFlat Flat     @relation("Swap_swapperIdToFlat", fields: [swapperId], references: [id], onDelete: Cascade)
+
+  @@unique([swapperId, swappeeId])
+}

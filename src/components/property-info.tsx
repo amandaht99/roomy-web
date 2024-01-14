@@ -55,9 +55,8 @@ const PropertyInfo = () => {
     if (!userId) return;
 
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/user/${userId}`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/flats/user/${userId}`
     );
-    console.log(response.data);
     setProperty(response.data);
   }
 
@@ -67,7 +66,7 @@ const PropertyInfo = () => {
   const deleteFlat = async (property: Property) => {
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_DATABASE_URL}/v1/flats/${property.id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/flats/${property.id}`
       );
       // If delete operation is successful, remove the property from the state
       setProperty(null);
@@ -145,7 +144,11 @@ const PropertyInfo = () => {
           Availability:
         </Heading>
 
-        <ChangeDateButton property={property} setProperty={setProperty} type="From"/>
+        <ChangeDateButton
+          property={property}
+          setProperty={setProperty}
+          type="From"
+        />
 
         <Box bg="gray.100" p={3} rounded="md" width="full" mb={2}>
           <Text fontWeight="medium">
@@ -153,7 +156,11 @@ const PropertyInfo = () => {
           </Text>
         </Box>
 
-        <ChangeDateButton property={property} setProperty={setProperty} type="To"/>
+        <ChangeDateButton
+          property={property}
+          setProperty={setProperty}
+          type="To"
+        />
 
         <Box bg="gray.100" p={3} rounded="md" width="full">
           <Text fontWeight="medium">
