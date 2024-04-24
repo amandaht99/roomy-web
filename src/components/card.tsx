@@ -10,7 +10,7 @@ import {
   Spacer,
   Stack,
   HStack,
-  useToast
+  useToast,
 } from "@chakra-ui/react";
 import { IoIosSwap } from "react-icons/io";
 import { AiTwotoneStar } from "react-icons/ai";
@@ -86,14 +86,21 @@ export default function MyCard(props: MyCardProps) {
             <Flex>
               <HStack>
                 <Icon as={IoIosSwap} />
-                <Text fontSize={"15px"}>{property.swapWithCity}</Text>
+                <Text fontSize={"15px"} data-cy="swap-city">
+                  {property.swapWithCity}
+                </Text>
               </HStack>
               <Spacer />
               <Icon as={BsDot} />
               <Spacer />
               <Text fontSize={"15px"}>
-                {format(parseISO(property.dateFrom), "dd MMM yy")} -
-                {format(parseISO(property.dateTo), "dd MMM yy")}
+                <span data-cy="date-from">
+                  {format(parseISO(property.dateFrom), "dd MMM yy")}
+                </span>
+                {" - "}
+                <span data-cy="date-to">
+                  {format(parseISO(property.dateTo), "dd MMM yy")}
+                </span>
               </Text>
             </Flex>
           </Stack>
@@ -111,6 +118,8 @@ export default function MyCard(props: MyCardProps) {
                 size={"sm"}
                 padding={"0"}
                 onClick={handleBookmarkClick}
+                data-cy="bookmark-button"
+                data-bookmarked={isBookmarked} // This line is there to reflect the bookmarked state in the DOM
               >
                 Bookmark
               </Button>
