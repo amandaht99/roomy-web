@@ -1,21 +1,11 @@
 import { NextRequest } from "next/server";
-import { prisma } from "../../../../../../prisma/db";
+import { getAllFlats } from "@/controllers/flats";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { userId: string } }
 ) {
-  const userId = params.userId;
-  const flats = await prisma.flat.findMany({
-    where: {
-      ownerId: {
-        not: userId,
-      },
-    },
-    include: {
-      address: true,
-    },
-  });
+  const flats = await getAllFlats(params.userId);
 
   return Response.json(flats);
 }
