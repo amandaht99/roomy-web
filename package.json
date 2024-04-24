@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
@@ -30,14 +31,21 @@
     "react-responsive-carousel": "^3.2.23"
   },
   "devDependencies": {
+    "@babel/core": "^7.24.4",
+    "@babel/preset-env": "^7.24.4",
+    "@babel/preset-typescript": "^7.24.1",
+    "@types/jest": "^29.5.12",
     "@types/node": "latest",
     "@types/react": "latest",
     "@types/react-datepicker": "^4.19.0",
     "@types/react-dom": "latest",
+    "babel-jest": "^29.7.0",
     "cypress": "^13.5.1",
     "eslint": "latest",
     "eslint-config-next": "latest",
+    "jest": "^29.7.0",
     "prisma": "^5.8.0",
+    "ts-node": "^10.9.2",
     "typescript": "latest"
   }
 }
