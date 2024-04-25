@@ -15,8 +15,8 @@ import { FaEuroSign, FaHome, FaGlobeAmericas, FaUsers } from "react-icons/fa";
 import Link from "next/link";
 import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
-import { useUser } from "@clerk/clerk-react";
 import { motion } from "framer-motion";
+import { useUser } from "@clerk/nextjs";
 
 // Framer motion variants for the animation
 const variants = {

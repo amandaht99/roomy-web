@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../../prisma/db";
 import { clerkClient } from "@clerk/nextjs";
 
@@ -16,9 +16,9 @@ export async function GET(
   });
 
   if (!flat) {
-    return Response.json(null, { status: 404 });
+    return NextResponse.json(null, { status: 404 });
   }
 
   const user = await clerkClient.users.getUser(flat.ownerId);
-  return Response.json({ ...flat, owner: user });
+  return NextResponse.json({ ...flat, owner: user });
 }

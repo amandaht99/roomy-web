@@ -9,8 +9,8 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { motion } from "framer-motion";
-import { useAuth } from "@clerk/clerk-react";
 import NotsignedIn from "@/components/not-signedIn";
+import { useAuth } from "@clerk/nextjs";
 
 // Framer motion variants for the animation
 const variants = {
@@ -32,7 +32,7 @@ export default function Trips() {
     return <NotsignedIn />;
   }
 
-      // Component layout with message "No Trips planned yet! as this hasnt been developed yet"
+  // Component layout with message "No Trips planned yet! as this hasnt been developed yet"
   return (
     <Box bg="white" color="black">
       <Container maxW="container.xl" py={10}>
