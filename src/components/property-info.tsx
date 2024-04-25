@@ -15,10 +15,10 @@ import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a lo
 import { Carousel } from "react-responsive-carousel";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useAuth } from "@clerk/clerk-react";
 import FlatForm from "./upload-property-button";
 import { format, parseISO } from "date-fns";
 import { ChangeDateButton } from "./change-date-button";
+import { useAuth } from "@clerk/nextjs";
 
 const MotionBox = motion(Box);
 

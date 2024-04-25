@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+
 import MyCard from "@/components/card";
 import {
   Heading,
@@ -32,14 +32,14 @@ function Home() {
   const [cardsPerPage, setCardsPerPage] = useState(3);
   const toast = useToast();
 
-  const cardWidth = 384;
-  const cardParent = document.getElementById("cardParent");
-
   useEffect(() => {
+    const cardWidth = 384;
+    const cardParent = document.getElementById("cardParent");
+
     if (!cardParent) return;
     const calced = Math.floor(cardParent.clientWidth / cardWidth);
     setCardsPerPage(calced > 0 ? calced : 1);
-  }, [cardParent]);
+  }, []);
 
   const [bookmarkedProperties, setBookmarkedProperties] = useState<Property[]>(
     []

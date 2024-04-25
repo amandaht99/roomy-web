@@ -8,8 +8,8 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import PropertyInfo from "../../components/property-info";
-import { SignOutButton, useUser } from "@clerk/clerk-react";
 import NotsignedIn from "@/components/not-signedIn";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 
 //Sample pictures data
 const property = {
@@ -32,7 +32,7 @@ export default function Profile() {
     return <NotsignedIn />;
   }
 
-    // Component layout with property information
+  // Component layout with property information
   return (
     <Container maxW="container.xl" py={10}>
       <VStack spacing={8} align="start">

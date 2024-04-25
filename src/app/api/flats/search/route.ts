@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../prisma/db";
 
 export async function POST(request: NextRequest) {
@@ -36,6 +36,6 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    return Response.json(flats);
+    return NextResponse.json(flats);
   }
 }

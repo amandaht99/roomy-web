@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getAllFlats } from "@/controllers/flats";
 
 export async function GET(
@@ -7,5 +7,5 @@ export async function GET(
 ) {
   const flats = await getAllFlats(params.userId);
 
-  return Response.json(flats);
+  return NextResponse.json(flats);
 }
