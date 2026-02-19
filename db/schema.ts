@@ -1,4 +1,5 @@
 // schema.ts (Drizzle ORM - PostgreSQL)
+import { relations } from "drizzle-orm";
 import {
   pgTable,
   serial,
@@ -7,9 +8,7 @@ import {
   timestamp,
   unique,
   index,
-  pgEnum,
-  relations,
-} from "drizzle-orm/core";
+} from "drizzle-orm/pg-core";
 
 // If you want Swap.state as free-form text (like Prisma String), keep it as text.
 // If you prefer an enum, uncomment below and use it in swaps.state.
