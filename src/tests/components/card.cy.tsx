@@ -1,6 +1,6 @@
 import { mount } from "cypress/react18";
-import MyCard from "../card";
-import { Property } from "../property-info";
+import MyCard from "../../components/card";
+import { Property } from "../../components/property-info";
 import { format, parseISO } from "date-fns";
 
 describe("MyCard component", () => {

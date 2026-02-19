@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@jest/globals";
 
-import { getAllFlats, putFlatDate } from "./flats";
+import { getAllFlats, putFlatDate } from "../../controllers/flats";
 
 describe("getAllFlats", () => {
   it("should return an array of flats not owned by the user", async () => {
@@ -37,10 +37,7 @@ describe("getAllFlats", () => {
 describe("putFlatDate", () => {
   // These tests are not working yet since the flatId cannot be found in the database.
   // Use beforeAll to create a flat in the database before running the tests:
-  beforeAll(async () => {
-
-    
-  });
+  beforeAll(async () => {});
 
   it("should update the 'From' date of a flat", async () => {
     const flatId = "10";
