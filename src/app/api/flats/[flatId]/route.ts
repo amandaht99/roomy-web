@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../../../prisma/db";
-import { clerkClient } from "@clerk/nextjs";
+import { clerkClient } from "@clerk/nextjs/server";
 
 // export async function CREATE(
 //     request: NextRequest,
@@ -54,24 +54,29 @@ import { clerkClient } from "@clerk/nextjs";
 //     }
 //   };
 
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { flatId: string } }
 ) {
-  const parsedFlatId = parseInt(params.flatId);
+  const parsedFlatId = parseInt(params.flatId, 10);
+
   const flat = await prisma.flat.findUnique({
-    where: {
-      id: parsedFlatId,
-    },
-    include: {
-      address: true,
-    },
+    where: { id: parsedFlatId },
+    include: { address: true },
   });
 
-  if (flat?.ownerId) {
-    const user = await clerkClient.users.getUser(flat.ownerId);
+  if (!flat) {
+    return NextResponse.json({ error: "Flat not found" }, { status: 404 });
+  }
+
+  if (flat.ownerId) {
+    const client = await clerkClient();
+    const user = await client.users.getUser(flat.ownerId);
     return NextResponse.json({ ...flat, owner: user });
   }
+
+  return NextResponse.json(flat);
 }
 
 // export async function DELETE(

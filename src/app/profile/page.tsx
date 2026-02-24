@@ -1,12 +1,5 @@
 "use client";
-import {
-  Heading,
-  VStack,
-  Container,
-  Spinner,
-  Flex,
-  Stack,
-} from "@chakra-ui/react";
+import { Steps, Heading, VStack, Container, Spinner, Flex, Stack } from "@chakra-ui/react";
 import PropertyInfo from "../../components/property-info";
 import NotsignedIn from "@/components/not-signedIn";
 import { SignOutButton, useUser } from "@clerk/nextjs";
@@ -35,11 +28,11 @@ export default function Profile() {
   // Component layout with property information
   return (
     <Container maxW="container.xl" py={10}>
-      <VStack spacing={8} align="start">
+      <VStack gap={8} align="start">
         <Heading as="h1" size="2xl" color="brand.900">
           Property Profile
         </Heading>
-        <Stack spacing={1} padding={"20px"}>
+        <Stack gap={1} padding={"20px"}>
           <Heading as="h2" size="xl" color="black">
             Your Place
           </Heading>

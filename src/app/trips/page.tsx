@@ -1,13 +1,5 @@
 "use client";
-import {
-  Box,
-  Heading,
-  Container,
-  VStack,
-  Spinner,
-  Stack,
-  Text,
-} from "@chakra-ui/react";
+import { Steps, Box, Heading, Container, VStack, Spinner, Stack, Text } from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import NotsignedIn from "@/components/not-signedIn";
 import { useAuth } from "@clerk/nextjs";
@@ -36,11 +28,11 @@ export default function Trips() {
   return (
     <Box bg="white" color="black">
       <Container maxW="container.xl" py={10}>
-        <VStack spacing={8} align="start">
+        <VStack gap={8} align="start">
           <Heading as="h1" size="2xl" color="brand.900">
             Your Next Trips
           </Heading>
-          <Stack spacing={1} padding={"20px"}>
+          <Stack gap={1} padding={"20px"}>
             <Text fontSize={"2xl"}>No Trips planned yet!</Text>
           </Stack>
         </VStack>

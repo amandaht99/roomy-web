@@ -1,5 +1,6 @@
 "use client";
 import {
+  Steps,
   Box,
   Heading,
   Text,
@@ -52,7 +53,7 @@ export default function Page() {
   // Component layout with information about the service and a Join Roomy button
   return (
     <Container maxW="container.xl" py={10}>
-      <VStack spacing={8} align="start">
+      <VStack gap={8} align="start">
         <Heading as="h1" size="2xl" color="brand.900">
           Welcome to Roomy!
         </Heading>

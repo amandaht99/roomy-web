@@ -1,36 +1,40 @@
 "use client";
 
-import { PropertiesProvider } from "@/context/properties-context";
-import { CacheProvider } from "@chakra-ui/next-js";
-import { ChakraProvider, extendTheme } from "@chakra-ui/react";
+import * as React from "react";
+import { ChakraProvider, createSystem, defaultConfig } from "@chakra-ui/react";
 import { ClerkProvider } from "@clerk/nextjs";
+import { PropertiesProvider } from "@/context/properties-context";
 
-// Define color scheme
+// Custom brand color token (replaces previous theme setup from v2)
 const colors = {
   brand: {
-    900: "#F13B07",
+    900: { value: "#F13B07" },
   },
 };
 
-const theme = extendTheme({
-  colors,
+// Chakra v3 uses `createSystem` instead of the old theme + CacheProvider pattern
+const system = createSystem(defaultConfig, {
+  theme: {
+    tokens: {
+      colors,
+    },
+  },
 });
 
-// Providers component wraps all the context providers used in the application
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <CacheProvider>
-      <ChakraProvider theme={theme}>
-        <ClerkProvider
-          appearance={{
-            variables: {
-              colorPrimary: "#F13B07",
-            },
-          }}
-        >
-          <PropertiesProvider>{children}</PropertiesProvider>
-        </ClerkProvider>
-      </ChakraProvider>
-    </CacheProvider>
+    // v3: ChakraProvider now receives a `system` via `value`
+    <ChakraProvider value={system}>
+      <ClerkProvider
+        appearance={{
+          variables: {
+            // Keep Clerk styling aligned with brand color
+            colorPrimary: "#F13B07",
+          },
+        }}
+      >
+        <PropertiesProvider>{children}</PropertiesProvider>
+      </ClerkProvider>
+    </ChakraProvider>
   );
 }

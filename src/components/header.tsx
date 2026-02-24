@@ -1,7 +1,7 @@
 "use client";
+import NextLink from "next/link";
 import Image from "next/image";
-import { Flex, Spacer } from "@chakra-ui/react";
-import { Link } from "@chakra-ui/next-js";
+import { Steps, Flex, Spacer, Link } from "@chakra-ui/react";
 import LogoPng from "../../public/images/roomylogo.png";
 import MyMenu from "@/components/menu";
 import SearchButton from "@/components/search-button";
@@ -23,8 +23,10 @@ export default function Header() {
       borderColor={"black"}
     >
       <Flex direction={"column"} justifyContent="center">
-        <Link href={"/"}>
-          <Image src={LogoPng} alt="Roomy Logo" width={160} />
+        <Link asChild>
+          <NextLink href={"/"}>
+            <Image src={LogoPng} alt="Roomy Logo" width={160} />
+          </NextLink>
         </Link>
       </Flex>
       <Flex
@@ -33,9 +35,15 @@ export default function Header() {
         alignItems={"center"}
         justifyContent={"flex-start"}
       >
-        <Link href="/home">Home</Link>
-        <Link href="/trips">Trips</Link>
-        <Link href="/profile">Profile</Link>
+        <Link asChild>
+          <NextLink href="/home">Home</NextLink>
+        </Link>
+        <Link asChild>
+          <NextLink href="/trips">Trips</NextLink>
+        </Link>
+        <Link asChild>
+          <NextLink href="/profile">Profile</NextLink>
+        </Link>
       </Flex>
       <Spacer />
       {/* If user is on Home page Search button will be displayed */}

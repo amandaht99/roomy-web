@@ -1,50 +1,51 @@
 "use client";
-import { HamburgerIcon } from "@chakra-ui/icons";
-import {
-  Menu,
-  MenuButton,
-  Button,
-  MenuList,
-  MenuGroup,
-  MenuItem,
-  MenuDivider,
-  IconButton,
-} from "@chakra-ui/react";
+
+import * as React from "react";
 import Link from "next/link";
-
+import { IconButton, Menu, Portal } from "@chakra-ui/react";
 import { SignedOut } from "@clerk/nextjs";
+import { LuMenu } from "react-icons/lu";
 
-//MyMenu is a component that renders a dropdown menu
 export default function MyMenu() {
   return (
-    <Menu>
-      <MenuButton
-        as={IconButton}
-        aria-label="Options"
-        icon={<HamburgerIcon />}
-        variant="outline"
-        // border={"1px"}
-        stroke={"0.5px"}
-        backgroundColor={"lightgrey"}
-      />
-      <MenuList>
-        <SignedOut>
-          <MenuGroup title="Profile">
-            <Link href="/sign-up">
-              <MenuItem>Sign up</MenuItem>
-            </Link>
-            <Link href="/sign-in">
-              <MenuItem>Sign in</MenuItem>
-            </Link>
-          </MenuGroup>
-          <MenuDivider />
-        </SignedOut>
-        <MenuGroup title="Other">
-          <Link href="/help">
-            <MenuItem>Help</MenuItem>
-          </Link>
-        </MenuGroup>
-      </MenuList>
-    </Menu>
+    <Menu.Root>
+      <Menu.Trigger asChild>
+        <IconButton
+          aria-label="Options"
+          variant="outline"
+          backgroundColor="lightgrey"
+        >
+          <LuMenu />
+        </IconButton>
+      </Menu.Trigger>
+
+      <Portal>
+        <Menu.Positioner>
+          <Menu.Content>
+            <SignedOut>
+              <Menu.ItemGroup>
+                <Menu.ItemGroupLabel>Profile</Menu.ItemGroupLabel>
+
+                <Menu.Item value="sign-up" asChild>
+                  <Link href="/sign-up">Sign up</Link>
+                </Menu.Item>
+
+                <Menu.Item value="sign-in" asChild>
+                  <Link href="/sign-in">Sign in</Link>
+                </Menu.Item>
+              </Menu.ItemGroup>
+            </SignedOut>
+
+            <Menu.ItemGroup>
+              <Menu.ItemGroupLabel>Other</Menu.ItemGroupLabel>
+
+              <Menu.Item value="help" asChild>
+                <Link href="/help">Help</Link>
+              </Menu.Item>
+            </Menu.ItemGroup>
+          </Menu.Content>
+        </Menu.Positioner>
+      </Portal>
+    </Menu.Root>
   );
 }

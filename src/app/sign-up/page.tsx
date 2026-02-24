@@ -1,4 +1,4 @@
-import { Center } from "@chakra-ui/react";
+import { Steps, Center } from "@chakra-ui/react";
 import { SignUp } from "@clerk/nextjs";
 
 // Page displays the SignUp form from Clerk

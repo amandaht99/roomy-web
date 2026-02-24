@@ -1,7 +1,7 @@
 "use client";
 import {
+  Steps,
   Card,
-  CardBody,
   Skeleton,
   Button,
   Text,
@@ -68,8 +68,8 @@ export default function MyCard(props: MyCardProps) {
   };
 
   return (
-    <Card w="sm" minWidth="sm">
-      <CardBody>
+    <Card.Root w="sm" minWidth="sm">
+      <Card.Body>
         <Skeleton>
           ≈
           {/* <Image
@@ -85,13 +85,13 @@ export default function MyCard(props: MyCardProps) {
             </Text>
             <Flex>
               <HStack>
-                <Icon as={IoIosSwap} />
+                <Icon asChild><IoIosSwap /></Icon>
                 <Text fontSize={"15px"} data-cy="swap-city">
                   {property.swapWithCity}
                 </Text>
               </HStack>
               <Spacer />
-              <Icon as={BsDot} />
+              <Icon asChild><BsDot /></Icon>
               <Spacer />
               <Text fontSize={"15px"}>
                 <span data-cy="date-from">
@@ -107,26 +107,24 @@ export default function MyCard(props: MyCardProps) {
           <Spacer />
           <Stack align={"end"}>
             <HStack>
-              <Icon as={AiTwotoneStar} />
+              <Icon asChild><AiTwotoneStar /></Icon>
               <Text fontSize={"15px"}>4.71</Text>
             </HStack>
             {!showInBookmarks && (
               <Button
                 flex="1"
                 variant="ghost"
-                leftIcon={isBookmarked ? <BsBookmarkFill /> : <BsBookmark />}
                 size={"sm"}
                 padding={"0"}
                 onClick={handleBookmarkClick}
                 data-cy="bookmark-button"
-                data-bookmarked={isBookmarked} // This line is there to reflect the bookmarked state in the DOM
-              >
-                Bookmark
-              </Button>
+                // This line is there to reflect the bookmarked state in the DOM
+                data-bookmarked={isBookmarked}>{isBookmarked ? <BsBookmarkFill /> : <BsBookmark />}Bookmark
+                              </Button>
             )}
           </Stack>
         </Flex>
-      </CardBody>
-    </Card>
+      </Card.Body>
+    </Card.Root>
   );
 }

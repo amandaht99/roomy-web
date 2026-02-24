@@ -1,21 +1,16 @@
 import { useForm, Controller } from "react-hook-form";
 import {
+  Steps,
   Box,
   Button,
-  FormControl,
-  FormLabel,
   Input,
   Textarea,
   VStack,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   useDisclosure,
   useToast,
+  Field,
+  Dialog,
+  Portal,
 } from "@chakra-ui/react";
 import { Property } from "./property-info";
 import { Dispatch, SetStateAction } from "react";
@@ -38,7 +33,7 @@ const FlatForm = (props: {
   userId?: string | null;
 }) => {
   const { setProperty, userId } = props;
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const { handleSubmit, control } = useForm<UploadFormData>({
     defaultValues: { images: [], address: {} },
   });
@@ -105,117 +100,120 @@ const FlatForm = (props: {
       <Button onClick={onOpen} textColor={"white"} backgroundColor="#F13B07">
         Upload Property
       </Button>
+      <Dialog.Root open={isOpen} size='xl' onOpenChange={e => {
+        if (!e.open) {
+          onClose();
+        }
+      }}>
+        <Portal>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="xl">
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Fill in Property Info</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Box
-              as="form"
-              onSubmit={handleSubmit(onSubmit)}
-              p="5"
-              shadow="md"
-              borderWidth="1px"
-            >
-              <VStack spacing="5">
-                <FormControl isRequired={true} id="swapWithCity">
-                  <FormLabel>I want to stay in ...</FormLabel>
-                  <Controller
-                    name="swapWithCity"
-                    control={control}
-                    render={({ field }) => (
-                      <Input {...field} placeholder="Enter city" />
-                    )}
-                  />
-                </FormControl>
-                <FormControl isRequired={true} id="street">
-                  <FormLabel>My property is in ...</FormLabel>
-                  <Controller
-                    name="address.street"
-                    control={control}
-                    render={({ field }) => (
-                      <Input {...field} placeholder="Enter street" />
-                    )}
-                  />
-                </FormControl>
-                <FormControl isRequired={true} id="city">
-                  <Controller
-                    name="address.city"
-                    control={control}
-                    render={({ field }) => (
-                      <Input {...field} placeholder="Enter city" />
-                    )}
-                  />
-                </FormControl>
-                <FormControl isRequired={true} id="country">
-                  <Controller
-                    name="address.country"
-                    control={control}
-                    render={({ field }) => (
-                      <Input {...field} placeholder="Enter country" />
-                    )}
-                  />
-                </FormControl>
-                <FormControl id="description">
-                  <FormLabel>Description (optional)</FormLabel>
-                  <Controller
-                    name="description"
-                    control={control}
-                    render={({ field }) => <Textarea {...field} />}
-                  />
-                </FormControl>
-                <FormControl isRequired={true} id="dateFrom">
-                  <FormLabel>I could swap from ...</FormLabel>
-                  <Controller
-                    name="dateFrom"
-                    control={control}
-                    render={({ field }) => <Input type="date" {...field} />}
-                  />
-                </FormControl>
-                <FormControl isRequired={true} id="dateTo">
-                  <FormLabel>until ...</FormLabel>
-                  <Controller
-                    name="dateTo"
-                    control={control}
-                    render={({ field }) => <Input type="date" {...field} />}
-                  />
-                </FormControl>
-                <FormControl id="rooms">
-                  <FormLabel>Rooms (optional)</FormLabel>
-                  <Controller
-                    name="rooms"
-                    control={control}
-                    render={({ field }) => (
-                      <Input {...field} placeholder="Enter number of rooms" />
-                    )}
-                  />
-                </FormControl>
-                {/* <FormControl isRequired={true} id="images">
-                  <FormLabel>Images (optional)</FormLabel>
-                  <Controller
-                    name="images"
-                    control={control}
-                    defaultValue=""
-                    render={({ field }) => <Input {...field} placeholder="Enter image URLs separated by commas" />}
-                  />
-                </FormControl> */}
-              </VStack>
-            </Box>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              backgroundColor="brand.900"
-              textColor={"white"}
-              type="submit"
-              onClick={handleSubmit(onSubmit)}
-            >
-              Submit
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content>
+              <Dialog.Header>Fill in Property Info</Dialog.Header>
+              <Dialog.CloseTrigger />
+              <Dialog.Body>
+                <Box p="5" shadow="md" borderWidth="1px" asChild><form onSubmit={handleSubmit(onSubmit)}>
+                    <VStack gap="5">
+                      <Field.Root required={true} id="swapWithCity">
+                        <Field.Label>I want to stay in ...</Field.Label>
+                        <Controller
+                          name="swapWithCity"
+                          control={control}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Enter city" />
+                          )}
+                        />
+                      </Field.Root>
+                      <Field.Root required={true} id="street">
+                        <Field.Label>My property is in ...</Field.Label>
+                        <Controller
+                          name="address.street"
+                          control={control}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Enter street" />
+                          )}
+                        />
+                      </Field.Root>
+                      <Field.Root required={true} id="city">
+                        <Controller
+                          name="address.city"
+                          control={control}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Enter city" />
+                          )}
+                        />
+                      </Field.Root>
+                      <Field.Root required={true} id="country">
+                        <Controller
+                          name="address.country"
+                          control={control}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Enter country" />
+                          )}
+                        />
+                      </Field.Root>
+                      <Field.Root id="description">
+                        <Field.Label>Description (optional)</Field.Label>
+                        <Controller
+                          name="description"
+                          control={control}
+                          render={({ field }) => <Textarea {...field} />}
+                        />
+                      </Field.Root>
+                      <Field.Root required={true} id="dateFrom">
+                        <Field.Label>I could swap from ...</Field.Label>
+                        <Controller
+                          name="dateFrom"
+                          control={control}
+                          render={({ field }) => <Input type="date" {...field} />}
+                        />
+                      </Field.Root>
+                      <Field.Root required={true} id="dateTo">
+                        <Field.Label>until ...</Field.Label>
+                        <Controller
+                          name="dateTo"
+                          control={control}
+                          render={({ field }) => <Input type="date" {...field} />}
+                        />
+                      </Field.Root>
+                      <Field.Root id="rooms">
+                        <Field.Label>Rooms (optional)</Field.Label>
+                        <Controller
+                          name="rooms"
+                          control={control}
+                          render={({ field }) => (
+                            <Input {...field} placeholder="Enter number of rooms" />
+                          )}
+                        />
+                      </Field.Root>
+                      {/* <FormControl isRequired={true} id="images">
+                        <FormLabel>Images (optional)</FormLabel>
+                        <Controller
+                          name="images"
+                          control={control}
+                          defaultValue=""
+                          render={({ field }) => <Input {...field} placeholder="Enter image URLs separated by commas" />}
+                        />
+                      </FormControl> */}
+                    </VStack>
+                  </form></Box>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Button
+                  backgroundColor="brand.900"
+                  textColor={"white"}
+                  type="submit"
+                  onClick={handleSubmit(onSubmit)}
+                >
+                  Submit
+                </Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+
+        </Portal>
+      </Dialog.Root>
     </>
   );
 };

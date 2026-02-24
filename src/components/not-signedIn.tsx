@@ -1,4 +1,4 @@
-import { VStack, Text } from '@chakra-ui/react'
+import { Steps, VStack, Text } from '@chakra-ui/react';
 import SignInButton from './signIn-button'
 import React from 'react'
 

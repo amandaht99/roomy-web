@@ -1,14 +1,5 @@
 "use client";
-import {
-  Box,
-  Heading,
-  Text,
-  VStack,
-  Image,
-  Icon,
-  Button,
-  useToast,
-} from "@chakra-ui/react";
+import { Steps, Box, Heading, Text, VStack, Image, Icon, Button, useToast } from "@chakra-ui/react";
 import { FaMapMarkerAlt, FaTrash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
@@ -119,7 +110,7 @@ const PropertyInfo = () => {
       variants={variants}
       whileHover={{ y: -10 }}
     >
-      <VStack align="start" spacing={5}>
+      <VStack align="start" gap={5}>
         <Carousel showThumbs={false}>
           <Image
             src={
@@ -168,19 +159,16 @@ const PropertyInfo = () => {
           </Text>
         </Box>
         <Text>
-          <Icon as={FaMapMarkerAlt} color="#F13B07" /> {property.address.street}
+          <Icon color="#F13B07" asChild><FaMapMarkerAlt /></Icon> {property.address.street}
           , {property.address.city}
         </Text>
         <Text fontStyle={"italic"}>{property.description}</Text>
         <Button
-          leftIcon={<Icon as={FaTrash} />}
           backgroundColor={"brand.900"}
           textColor={"white"}
           variant="outline"
-          onClick={() => deleteFlat(property)}
-        >
-          Delete Flat
-        </Button>
+          onClick={() => deleteFlat(property)}><Icon asChild><FaTrash /></Icon>Delete Flat
+                  </Button>
       </VStack>
     </MotionBox>
   );

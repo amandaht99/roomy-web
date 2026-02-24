@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@chakra-ui/react";
+import { Steps, Button } from "@chakra-ui/react";
 import Link from "next/link";
 
 // A functional component for the sign-in button

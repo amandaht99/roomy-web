@@ -1,28 +1,23 @@
 "use client";
 import { useForm, Controller } from "react-hook-form";
-import { SearchIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import {
+  Steps,
   useDisclosure,
   Button,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter,
   Stack,
-  FormControl,
-  FormLabel,
   Input,
   Spacer,
   Flex,
   useToast,
+  Field,
+  Dialog,
+  Portal,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useProperties } from "@/context/properties-context";
+import { LuSearch } from 'react-icons/lu';
 
 // SearchFormData type defines the structure of the search form data
 interface SearchFormData {
@@ -35,7 +30,7 @@ interface SearchFormData {
 // Displays a search button and a modal form for searching properties
 export default function SearchButton() {
   const { setProperties, setFiltersApplied } = useProperties();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
   const {
     handleSubmit,
     register,
@@ -95,128 +90,133 @@ export default function SearchButton() {
     <>
       <Button
         data-cy="search-button"
-        rightIcon={<SearchIcon />}
         onClick={onOpen}
         textColor={"white"}
-        backgroundColor="#F13B07"
-      >
-        Search
-      </Button>
+        backgroundColor="#F13B07">Search
+              <LuSearch /></Button>
+      <Dialog.Root open={isOpen} onOpenChange={e => {
+        if (!e.open) {
+          onClose();
+        }
+      }}>
+        <Portal>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Find a Swap</ModalHeader>
-          <ModalCloseButton />
-
-          <form onSubmit={handleSubmit(fetchFlats)}>
-            <ModalBody>
-              <Stack>
-                <FormControl isInvalid={!!errors?.city}>
-                  <FormLabel htmlFor="city">I want to stay in ...</FormLabel>
-                  <Input
-                    id="city"
-                    data-cy="city-input"
-                    placeholder="Search city"
-                    {...register("city", { required: "City is required" })}
-                  />
-                  {errors.city && <p>{errors.city.message}</p>}
-                </FormControl>
-
-                <Spacer height={"20px"} />
-
-                <FormControl isInvalid={!!errors?.hometown}>
-                  <FormLabel htmlFor="hometown">
-                    and could offer a place in ...
-                  </FormLabel>
-
-                  <Input
-                    id="hometown"
-                    data-cy="hometown-input"
-                    placeholder="Search city"
-                    {...register("hometown", {
-                      required: "Hometown is required",
-                    })}
-                  />
-                  {errors.hometown && <p>{errors.hometown.message}</p>}
-                </FormControl>
-
-                <Spacer height={"20px"} />
-
-                <FormControl isInvalid={!!errors?.dateFrom}>
-                  <FormLabel htmlFor="dateFrom">from ...</FormLabel>
-                  <Flex>
-                    <Controller
-                      name="dateFrom"
-                      control={control}
-                      rules={{ required: "Date selection is required" }}
-                      render={({ field }) => (
-                        <DatePicker
-                          onChange={field.onChange}
-                          selected={field.value}
-                          dateFormat="dd/MM/yyyy"
-                          minDate={new Date()}
-                          showTimeSelect={false}
-                          todayButton="Today"
-                          customInput={
-                            <Input w={"100%"} data-cy="dateFrom-input" />
-                          }
-                          dropdownMode="select"
-                          placeholderText="Choose start date"
-                          shouldCloseOnSelect
-                        />
-                      )}
-                    />
-                    {errors.dateFrom && <p>{errors.dateFrom.message}</p>}
-                  </Flex>
-                </FormControl>
-
-                <Spacer height={"20px"} />
-
-                <FormControl isInvalid={!!errors?.dateTo}>
-                  <FormLabel htmlFor="dateTo">until ...</FormLabel>
-
-                  <Controller
-                    name="dateTo"
-                    control={control}
-                    rules={{ required: "Date selection is required" }}
-                    render={({ field }) => (
-                      <DatePicker
-                        onChange={field.onChange}
-                        selected={field.value}
-                        dateFormat="dd/MM/yyyy"
-                        minDate={new Date()}
-                        showTimeSelect={false}
-                        todayButton="Today"
-                        customInput={
-                          <Input w={"100%"} data-cy="dateTo-input" />
-                        }
-                        dropdownMode="select"
-                        placeholderText="Choose end date"
-                        shouldCloseOnSelect
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content>
+              <Dialog.Header>Find a Swap</Dialog.Header>
+              <Dialog.CloseTrigger />
+              <form onSubmit={handleSubmit(fetchFlats)}>
+                <Dialog.Body>
+                  <Stack>
+                    <Field.Root invalid={!!errors?.city}>
+                      <Field.Label htmlFor="city">I want to stay in ...</Field.Label>
+                      <Input
+                        id="city"
+                        data-cy="city-input"
+                        placeholder="Search city"
+                        {...register("city", { required: "City is required" })}
                       />
-                    )}
-                  />
-                  {errors.dateTo && <p>{errors.dateTo.message}</p>}
-                </FormControl>
-              </Stack>
-            </ModalBody>
+                      {errors.city && <p>{errors.city.message}</p>}
+                    </Field.Root>
 
-            <ModalFooter>
-              <Button
-                data-cy="submit-button"
-                mt={4}
-                backgroundColor={"brand.900"}
-                textColor={"white"}
-                isLoading={isSubmitting}
-                type="submit"
-              >
-                Submit
-              </Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
+                    <Spacer height={"20px"} />
+
+                    <Field.Root invalid={!!errors?.hometown}>
+                      <Field.Label htmlFor="hometown">
+                        and could offer a place in ...
+                      </Field.Label>
+
+                      <Input
+                        id="hometown"
+                        data-cy="hometown-input"
+                        placeholder="Search city"
+                        {...register("hometown", {
+                          required: "Hometown is required",
+                        })}
+                      />
+                      {errors.hometown && <p>{errors.hometown.message}</p>}
+                    </Field.Root>
+
+                    <Spacer height={"20px"} />
+
+                    <Field.Root invalid={!!errors?.dateFrom}>
+                      <Field.Label htmlFor="dateFrom">from ...</Field.Label>
+                      <Flex>
+                        <Controller
+                          name="dateFrom"
+                          control={control}
+                          rules={{ required: "Date selection is required" }}
+                          render={({ field }) => (
+                            <DatePicker
+                              onChange={field.onChange}
+                              selected={field.value}
+                              dateFormat="dd/MM/yyyy"
+                              minDate={new Date()}
+                              showTimeSelect={false}
+                              todayButton="Today"
+                              customInput={
+                                <Input w={"100%"} data-cy="dateFrom-input" />
+                              }
+                              dropdownMode="select"
+                              placeholderText="Choose start date"
+                              shouldCloseOnSelect
+                            />
+                          )}
+                        />
+                        {errors.dateFrom && <p>{errors.dateFrom.message}</p>}
+                      </Flex>
+                    </Field.Root>
+
+                    <Spacer height={"20px"} />
+
+                    <Field.Root invalid={!!errors?.dateTo}>
+                      <Field.Label htmlFor="dateTo">until ...</Field.Label>
+
+                      <Controller
+                        name="dateTo"
+                        control={control}
+                        rules={{ required: "Date selection is required" }}
+                        render={({ field }) => (
+                          <DatePicker
+                            onChange={field.onChange}
+                            selected={field.value}
+                            dateFormat="dd/MM/yyyy"
+                            minDate={new Date()}
+                            showTimeSelect={false}
+                            todayButton="Today"
+                            customInput={
+                              <Input w={"100%"} data-cy="dateTo-input" />
+                            }
+                            dropdownMode="select"
+                            placeholderText="Choose end date"
+                            shouldCloseOnSelect
+                          />
+                        )}
+                      />
+                      {errors.dateTo && <p>{errors.dateTo.message}</p>}
+                    </Field.Root>
+                  </Stack>
+                </Dialog.Body>
+
+                <Dialog.Footer>
+                  <Button
+                    data-cy="submit-button"
+                    mt={4}
+                    backgroundColor={"brand.900"}
+                    textColor={"white"}
+                    loading={isSubmitting}
+                    type="submit"
+                  >
+                    Submit
+                  </Button>
+                </Dialog.Footer>
+              </form>
+            </Dialog.Content>
+          </Dialog.Positioner>
+
+        </Portal>
+      </Dialog.Root>
     </>
   );
 }

@@ -1,24 +1,19 @@
-import { EditIcon } from "@chakra-ui/icons";
 import {
+  Steps,
   Button,
-  FormControl,
-  FormLabel,
   IconButton,
   Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
   useDisclosure,
   useToast,
+  Field,
+  Dialog,
+  Portal,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
 import { Property } from "./property-info";
 import { Dispatch, SetStateAction } from "react";
+import { LuPencil } from 'react-icons/lu';
 
 type ChangeDateButtonProps = {
   property: Property;
@@ -33,7 +28,7 @@ export function ChangeDateButton({
 }: ChangeDateButtonProps) {
   const toast = useToast();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { open, onOpen, onClose } = useDisclosure();
 
   const { control, getValues } = useForm({
     defaultValues: {
@@ -86,37 +81,44 @@ export function ChangeDateButton({
     <>
       <IconButton
         aria-label="Edit date"
-        icon={<EditIcon />}
         onClick={onOpen}
         size="sm"
         variant="outline"
-        data-cy={`date${type}-edit-button`}
-      />
+        data-cy={`date${type}-edit-button`}><LuPencil /></IconButton>
+      <Dialog.Root open={isOpen} onOpenChange={e => {
+        if (!e.open) {
+          onClose();
+        }
+      }}>
+        <Portal>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Edit Date</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <FormControl>
-              <FormLabel>Change Date</FormLabel>
-              <Controller
-                name="date"
-                control={control}
-                render={({ field }) => (
-                  <Input type="date" {...field} data-cy={`date${type}-input`} />
-                )}
-              />
-            </FormControl>
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={changeDate} data-cy={`date${type}-submit-button`}>
-              Change Date
-            </Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content>
+              <Dialog.Header>Edit Date</Dialog.Header>
+              <Dialog.CloseTrigger />
+              <Dialog.Body>
+                <Field.Root>
+                  <Field.Label>Change Date</Field.Label>
+                  <Controller
+                    name="date"
+                    control={control}
+                    render={({ field }) => (
+                      <Input type="date" {...field} data-cy={`date${type}-input`} />
+                    )}
+                  />
+                </Field.Root>
+              </Dialog.Body>
+              <Dialog.Footer>
+                <Button onClick={changeDate} data-cy={`date${type}-submit-button`}>
+                  Change Date
+                </Button>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+
+        </Portal>
+      </Dialog.Root>
     </>
   );
 }
