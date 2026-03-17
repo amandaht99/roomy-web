@@ -1,5 +1,14 @@
 "use client";
-import { Steps, Box, Heading, Container, VStack, Spinner, Stack, Text } from "@chakra-ui/react";
+import {
+  Steps,
+  Box,
+  Heading,
+  Container,
+  VStack,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import { motion } from "framer-motion";
 import NotsignedIn from "@/components/not-signedIn";
 import { useAuth } from "@clerk/nextjs";
@@ -10,7 +19,7 @@ const variants = {
   show: { opacity: 1 },
 };
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 // Trips component displays user's planned trips
 export default function Trips() {

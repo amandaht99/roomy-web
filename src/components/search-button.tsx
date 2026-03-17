@@ -1,7 +1,6 @@
 "use client";
 import { useForm, Controller } from "react-hook-form";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import {
   Steps,
   useDisclosure,
@@ -10,14 +9,14 @@ import {
   Input,
   Spacer,
   Flex,
-  useToast,
   Field,
   Dialog,
   Portal,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useProperties } from "@/context/properties-context";
-import { LuSearch } from 'react-icons/lu';
+import { LuSearch } from "react-icons/lu";
+import { toaster } from "@/components/ui/toaster";
 
 // SearchFormData type defines the structure of the search form data
 interface SearchFormData {
@@ -37,7 +36,6 @@ export default function SearchButton() {
     control,
     formState: { errors, isSubmitting },
   } = useForm<SearchFormData>();
-  const toast = useToast();
 
   // FetchFlats function sends a POST request to the backend with the search filters,
   // then updates the properties in the context and shows a toast notification
@@ -52,7 +50,7 @@ export default function SearchButton() {
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/flats/search`,
-        { filters: parsedData }
+        { filters: parsedData },
       );
 
       setProperties(response.data);
@@ -62,25 +60,17 @@ export default function SearchButton() {
       onClose();
 
       // A success toast
-      toast({
+      toaster.success({
         title: "Filter applied.",
         description: "The filter request was successful.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
       });
     } catch (e) {
       console.error(e);
       // An error toast for error handling
-      toast({
+      toaster.error({
         title: "Failed to apply filters.",
         description:
           "There was an error processing the filter request. Please try again.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
       });
     }
   }
@@ -91,16 +81,20 @@ export default function SearchButton() {
       <Button
         data-cy="search-button"
         onClick={onOpen}
-        textColor={"white"}
-        backgroundColor="#F13B07">Search
-              <LuSearch /></Button>
-      <Dialog.Root open={isOpen} onOpenChange={e => {
-        if (!e.open) {
-          onClose();
-        }
-      }}>
+        backgroundColor="#F13B07"
+      >
+        Search
+        <LuSearch />
+      </Button>
+      <Dialog.Root
+        open={open}
+        onOpenChange={(e) => {
+          if (!e.open) {
+            onClose();
+          }
+        }}
+      >
         <Portal>
-
           <Dialog.Backdrop />
           <Dialog.Positioner>
             <Dialog.Content>
@@ -110,7 +104,9 @@ export default function SearchButton() {
                 <Dialog.Body>
                   <Stack>
                     <Field.Root invalid={!!errors?.city}>
-                      <Field.Label htmlFor="city">I want to stay in ...</Field.Label>
+                      <Field.Label htmlFor="city">
+                        I want to stay in ...
+                      </Field.Label>
                       <Input
                         id="city"
                         data-cy="city-input"
@@ -204,7 +200,6 @@ export default function SearchButton() {
                     data-cy="submit-button"
                     mt={4}
                     backgroundColor={"brand.900"}
-                    textColor={"white"}
                     loading={isSubmitting}
                     type="submit"
                   >
@@ -214,7 +209,6 @@ export default function SearchButton() {
               </form>
             </Dialog.Content>
           </Dialog.Positioner>
-
         </Portal>
       </Dialog.Root>
     </>

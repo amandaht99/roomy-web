@@ -10,7 +10,6 @@ import {
   Spacer,
   Stack,
   HStack,
-  useToast,
 } from "@chakra-ui/react";
 import { IoIosSwap } from "react-icons/io";
 import { AiTwotoneStar } from "react-icons/ai";
@@ -18,6 +17,7 @@ import { BsDot, BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { Property } from "./property-info";
 import { format, parseISO } from "date-fns";
 import { useState } from "react";
+import { toaster } from "@/components/ui/toaster";
 
 //Defining the type for the props
 interface MyCardProps {
@@ -31,7 +31,6 @@ export default function MyCard(props: MyCardProps) {
   const { property, setBookmarkedProperties, showInBookmarks = false } = props;
 
   const [isBookmarked, setBookmarked] = useState(false);
-  const toast = useToast();
 
   const handleBookmarkClick = () => {
     setBookmarked(!isBookmarked);
@@ -42,27 +41,19 @@ export default function MyCard(props: MyCardProps) {
         property,
       ]);
 
-      toast({
+      toaster.success({
         title: "Property bookmarked.",
         description: "You have successfully bookmarked this property.",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-        position: "top",
       });
     } else {
       setBookmarkedProperties((prevProperties) =>
         prevProperties.filter((p) => p.id !== property.id)
       );
 
-      toast({
+      toaster.success({
         title: "Property unbookmarked.",
         description:
           "You have successfully removed this property from your bookmarks.",
-        status: "success",
-        duration: 2000,
-        isClosable: true,
-        position: "top",
       });
     }
   };

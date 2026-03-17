@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../../prisma/db";
-import { clerkClient } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { db } from "../../../../../db";
+import { flats, addresses } from "../../../../../db/schema";
+import { eq } from "drizzle-orm";
+import { withLogging } from "@/lib/withLogging";
+import { logger } from "@/lib/logger";
 
 // export async function CREATE(
 //     request: NextRequest,
@@ -54,48 +58,85 @@ import { clerkClient } from "@clerk/nextjs/server";
 //     }
 //   };
 
-
-export async function GET(
+async function handleGET(
   request: NextRequest,
-  { params }: { params: { flatId: string } }
+  { params }: { params: Promise<{ flatId: string }> },
 ) {
-  const parsedFlatId = parseInt(params.flatId, 10);
+  const { flatId } = await params;
+  const parsedFlatId = parseInt(flatId, 10);
+  logger.debug("Fetching flat", { flatId: parsedFlatId });
 
-  const flat = await prisma.flat.findUnique({
-    where: { id: parsedFlatId },
-    include: { address: true },
-  });
+  const flatRows = await db
+    .select()
+    .from(flats)
+    .where(eq(flats.id, parsedFlatId))
+    .limit(1);
+  const flat = flatRows[0];
+
+  if (!flat) {
+    logger.warn("Flat not found", { flatId: parsedFlatId });
+    return NextResponse.json({ error: "Flat not found" }, { status: 404 });
+  }
+
+  logger.debug("Flat found", { id: flat.id, ownerId: flat.ownerId });
+
+  // Fetch related address (one-to-one)
+  const addressRows = await db
+    .select()
+    .from(addresses)
+    .where(eq(addresses.flatId, flat.id))
+    .limit(1);
+  const address = addressRows[0] ?? null;
+
+  if (flat.ownerId) {
+    const client = await clerkClient();
+    const user = await client.users.getUser(flat.ownerId);
+    return NextResponse.json({ ...flat, address, owner: user });
+  }
+
+  return NextResponse.json({ ...flat, address });
+}
+
+export const GET = withLogging(handleGET, "GET /api/flats/[flatId]");
+
+async function handleDELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ flatId: string }> },
+) {
+  const { flatId } = await params;
+  const parsedFlatId = parseInt(flatId, 10);
+
+  if (!Number.isInteger(parsedFlatId) || parsedFlatId <= 0) {
+    return NextResponse.json({ error: "Invalid flatId" }, { status: 400 });
+  }
+
+  const { userId } = await auth();
+  if (!userId) {
+    return NextResponse.json(
+      { error: "Authentication required" },
+      { status: 401 },
+    );
+  }
+
+  const flatRows = await db
+    .select({ id: flats.id, ownerId: flats.ownerId })
+    .from(flats)
+    .where(eq(flats.id, parsedFlatId))
+    .limit(1);
+  const flat = flatRows[0];
 
   if (!flat) {
     return NextResponse.json({ error: "Flat not found" }, { status: 404 });
   }
 
-  if (flat.ownerId) {
-    const client = await clerkClient();
-    const user = await client.users.getUser(flat.ownerId);
-    return NextResponse.json({ ...flat, owner: user });
+  if (flat.ownerId !== userId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  return NextResponse.json(flat);
+  await db.delete(flats).where(eq(flats.id, parsedFlatId));
+  logger.info("Flat deleted", { flatId: parsedFlatId, userId });
+
+  return new NextResponse(null, { status: 204 });
 }
 
-// export async function DELETE(
-//   request: NextRequest,
-//   { params }: { params: { flatId: string } }
-// ) {
-//   try {
-//     const deletedFlat = await prisma.flat.delete({
-//       where: {
-//         id: parseInt(params.flatId),
-//       },
-//     });
-
-//     await deleteImages(deletedFlat.imagesPaths);
-
-//     set.status = 204;
-//     return;
-//   } catch (error) {
-//     console.error(error);
-//     return error;
-//   }
-// }
+export const DELETE = withLogging(handleDELETE, "DELETE /api/flats/[flatId]");

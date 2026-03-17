@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../../prisma/db";
+import { db } from "../../../../../db";
+import { flats, addresses } from "../../../../../db/schema";
+import { eq, and, lte, gte, inArray } from "drizzle-orm";
+import { withLogging } from "@/lib/withLogging";
+import { logger } from "@/lib/logger";
 
-export async function POST(request: NextRequest) {
+async function handlePOST(request: NextRequest) {
   const body = await request.json();
   const filters = body?.filters;
+  logger.debug("Search request received", { filters });
   if (filters) {
     const { city, dateFrom, dateTo, hometown } = filters;
 
@@ -16,26 +21,60 @@ export async function POST(request: NextRequest) {
     const dateToGte = new Date(dateTo);
     dateToGte.setDate(dateToGte.getDate() - 3);
 
-    const flats = await prisma.flat.findMany({
-      where: {
-        address: {
-          city,
-        },
-        dateFrom: {
-          lte: dateFromLte,
-          gte: dateFromGte,
-        },
-        dateTo: {
-          lte: dateToLte,
-          gte: dateToGte,
-        },
-        swapWithCity: hometown,
-      },
-      include: {
-        address: true,
-      },
+    // First, find all addresses matching the city
+    const matchingAddresses = await db
+      .select({ flatId: addresses.flatId })
+      .from(addresses)
+      .where(eq(addresses.city, city));
+
+    const flatIdsFromAddress = matchingAddresses.map((a) => a.flatId);
+
+    if (flatIdsFromAddress.length === 0) {
+      return NextResponse.json([]);
+    }
+
+    // Now find flats matching all filters
+    const flatRows = await db
+      .select()
+      .from(flats)
+      .where(
+        and(
+          inArray(flats.id, flatIdsFromAddress),
+          gte(flats.dateFrom, dateFromGte),
+          lte(flats.dateFrom, dateFromLte),
+          gte(flats.dateTo, dateToGte),
+          lte(flats.dateTo, dateToLte),
+          eq(flats.swapWithCity, hometown),
+        ),
+      );
+
+    // Fetch addresses for all returned flats
+    const addressRows = await db
+      .select()
+      .from(addresses)
+      .where(
+        inArray(
+          addresses.flatId,
+          flatRows.map((f) => f.id),
+        ),
+      );
+
+    const addressMap: Record<number, typeof addresses.$inferSelect> = {};
+    addressRows.forEach((addr) => {
+      addressMap[addr.flatId] = addr;
     });
 
-    return NextResponse.json(flats);
+    // Merge addresses into flats
+    const flatData = flatRows.map((flat) => ({
+      ...flat,
+      address: addressMap[flat.id] || null,
+    }));
+
+    logger.debug("Search completed", { resultCount: flatData.length, filters });
+    return NextResponse.json(flatData);
   }
+  logger.warn("Search request missing filters");
+  return NextResponse.json([]);
 }
+
+export const POST = withLogging(handlePOST, "POST /api/flats/search");

@@ -7,7 +7,6 @@ import {
   Textarea,
   VStack,
   useDisclosure,
-  useToast,
   Field,
   Dialog,
   Portal,
@@ -16,6 +15,7 @@ import { Property } from "./property-info";
 import { Dispatch, SetStateAction } from "react";
 import axios from "axios";
 import { parseISO } from "date-fns";
+import { toaster } from "@/components/ui/toaster";
 
 interface UploadFormData {
   description?: string;
@@ -37,8 +37,6 @@ const FlatForm = (props: {
   const { handleSubmit, control } = useForm<UploadFormData>({
     defaultValues: { images: [], address: {} },
   });
-
-  const toast = useToast();
 
   function convertToUppercase(string: string) {
     return string[0].toUpperCase() + string.substring(1);
@@ -64,32 +62,24 @@ const FlatForm = (props: {
 
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/flats/user/${userId}`,
-        parsedData
+        parsedData,
       );
 
       setProperty(response.data);
       onClose();
 
       // A success toast
-      toast({
+      toaster.success({
         title: "Flat uploaded.",
         description: "Your flat has been successfully uploaded.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
       });
     } catch (e) {
       console.error(e);
       // An erorr toast for error handling
-      toast({
+      toaster.error({
         title: "Failed to upload flat.",
         description:
           "There was an error uploading your flat. Please try again.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
       });
     }
   };
@@ -97,23 +87,27 @@ const FlatForm = (props: {
   // Rendering the component
   return (
     <>
-      <Button onClick={onOpen} textColor={"white"} backgroundColor="#F13B07">
+      <Button onClick={onOpen} backgroundColor="#F13B07">
         Upload Property
       </Button>
-      <Dialog.Root open={isOpen} size='xl' onOpenChange={e => {
-        if (!e.open) {
-          onClose();
-        }
-      }}>
+      <Dialog.Root
+        open={open}
+        size="xl"
+        onOpenChange={(e) => {
+          if (!e.open) {
+            onClose();
+          }
+        }}
+      >
         <Portal>
-
           <Dialog.Backdrop />
           <Dialog.Positioner>
             <Dialog.Content>
               <Dialog.Header>Fill in Property Info</Dialog.Header>
               <Dialog.CloseTrigger />
               <Dialog.Body>
-                <Box p="5" shadow="md" borderWidth="1px" asChild><form onSubmit={handleSubmit(onSubmit)}>
+                <Box p="5" shadow="md" borderWidth="1px" asChild>
+                  <form onSubmit={handleSubmit(onSubmit)}>
                     <VStack gap="5">
                       <Field.Root required={true} id="swapWithCity">
                         <Field.Label>I want to stay in ...</Field.Label>
@@ -166,7 +160,9 @@ const FlatForm = (props: {
                         <Controller
                           name="dateFrom"
                           control={control}
-                          render={({ field }) => <Input type="date" {...field} />}
+                          render={({ field }) => (
+                            <Input type="date" {...field} />
+                          )}
                         />
                       </Field.Root>
                       <Field.Root required={true} id="dateTo">
@@ -174,7 +170,9 @@ const FlatForm = (props: {
                         <Controller
                           name="dateTo"
                           control={control}
-                          render={({ field }) => <Input type="date" {...field} />}
+                          render={({ field }) => (
+                            <Input type="date" {...field} />
+                          )}
                         />
                       </Field.Root>
                       <Field.Root id="rooms">
@@ -183,7 +181,10 @@ const FlatForm = (props: {
                           name="rooms"
                           control={control}
                           render={({ field }) => (
-                            <Input {...field} placeholder="Enter number of rooms" />
+                            <Input
+                              {...field}
+                              placeholder="Enter number of rooms"
+                            />
                           )}
                         />
                       </Field.Root>
@@ -197,12 +198,12 @@ const FlatForm = (props: {
                         />
                       </FormControl> */}
                     </VStack>
-                  </form></Box>
+                  </form>
+                </Box>
               </Dialog.Body>
               <Dialog.Footer>
                 <Button
                   backgroundColor="brand.900"
-                  textColor={"white"}
                   type="submit"
                   onClick={handleSubmit(onSubmit)}
                 >
@@ -211,7 +212,6 @@ const FlatForm = (props: {
               </Dialog.Footer>
             </Dialog.Content>
           </Dialog.Positioner>
-
         </Portal>
       </Dialog.Root>
     </>

@@ -4,7 +4,6 @@ import {
   IconButton,
   Input,
   useDisclosure,
-  useToast,
   Field,
   Dialog,
   Portal,
@@ -13,7 +12,8 @@ import axios from "axios";
 import { Controller, useForm } from "react-hook-form";
 import { Property } from "./property-info";
 import { Dispatch, SetStateAction } from "react";
-import { LuPencil } from 'react-icons/lu';
+import { LuPencil } from "react-icons/lu";
+import { toaster } from "@/components/ui/toaster";
 
 type ChangeDateButtonProps = {
   property: Property;
@@ -26,8 +26,6 @@ export function ChangeDateButton({
   setProperty,
   type,
 }: ChangeDateButtonProps) {
-  const toast = useToast();
-
   const { open, onOpen, onClose } = useDisclosure();
 
   const { control, getValues } = useForm({
@@ -47,32 +45,24 @@ export function ChangeDateButton({
 
       const response = await axios.put(
         process.env.NEXT_PUBLIC_API_URL + "/api/flats/" + property.id + "/date",
-        formData
+        formData,
       );
 
       setProperty(response.data);
       onClose();
 
       // A success toast
-      toast({
+      toaster.success({
         title: "Changes applied.",
         description: "The date has been succesfully updated.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
       });
     } catch (e) {
       console.error(e);
       // An erorr toast for error handling
-      toast({
+      toaster.error({
         title: "Failed to apply changes.",
         description:
           "There was an error applying your change. Please try again.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
       });
     }
   };
@@ -84,14 +74,19 @@ export function ChangeDateButton({
         onClick={onOpen}
         size="sm"
         variant="outline"
-        data-cy={`date${type}-edit-button`}><LuPencil /></IconButton>
-      <Dialog.Root open={isOpen} onOpenChange={e => {
-        if (!e.open) {
-          onClose();
-        }
-      }}>
+        data-cy={`date${type}-edit-button`}
+      >
+        <LuPencil />
+      </IconButton>
+      <Dialog.Root
+        open={open}
+        onOpenChange={(e) => {
+          if (!e.open) {
+            onClose();
+          }
+        }}
+      >
         <Portal>
-
           <Dialog.Backdrop />
           <Dialog.Positioner>
             <Dialog.Content>
@@ -104,19 +99,25 @@ export function ChangeDateButton({
                     name="date"
                     control={control}
                     render={({ field }) => (
-                      <Input type="date" {...field} data-cy={`date${type}-input`} />
+                      <Input
+                        type="date"
+                        {...field}
+                        data-cy={`date${type}-input`}
+                      />
                     )}
                   />
                 </Field.Root>
               </Dialog.Body>
               <Dialog.Footer>
-                <Button onClick={changeDate} data-cy={`date${type}-submit-button`}>
+                <Button
+                  onClick={changeDate}
+                  data-cy={`date${type}-submit-button`}
+                >
                   Change Date
                 </Button>
               </Dialog.Footer>
             </Dialog.Content>
           </Dialog.Positioner>
-
         </Portal>
       </Dialog.Root>
     </>

@@ -10,9 +10,7 @@ import {
   Spacer,
   Container,
   Tag,
-  TagCloseButton,
   TagLabel,
-  useToast,
   Stack,
   HStack,
   VStack,
@@ -23,6 +21,7 @@ import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
 import { Property } from "@/components/property-info";
 import { useProperties } from "@/context/properties-context";
+import { toaster } from "@/components/ui/toaster";
 
 // Home component displays a list of properties and allows to paginate through them
 function Home() {
@@ -31,7 +30,6 @@ function Home() {
   const [currentPageProp, setCurrentPageProp] = useState(0);
   const [currentPageBook, setCurrentPageBook] = useState(0);
   const [cardsPerPage, setCardsPerPage] = useState(3);
-  const toast = useToast();
 
   useEffect(() => {
     const cardWidth = 384;
@@ -43,7 +41,7 @@ function Home() {
   }, []);
 
   const [bookmarkedProperties, setBookmarkedProperties] = useState<Property[]>(
-    []
+    [],
   );
 
   const { userId } = useAuth();
@@ -51,7 +49,7 @@ function Home() {
   // Fetches properties data from the server
   const fetchData = async () => {
     const result = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/flats/all/${userId || null}`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/flats/all/${userId || null}`,
     );
     setFiltersApplied(false);
     setProperties(result.data);
@@ -60,13 +58,9 @@ function Home() {
   // Removes filters and fetches all properties
   const removeFilters = async () => {
     fetchData();
-    toast({
+    toaster.success({
       title: "Filter removed.",
       description: "Showing all flats without filters.",
-      status: "success",
-      duration: 3000,
-      isClosable: true,
-      position: "top",
     });
   };
 
@@ -126,15 +120,19 @@ function Home() {
               <Text fontSize="2xl">You might like </Text>
               <Spacer />
               <HStack>
-                <IconButton aria-label="Paginate left" onClick={goBackwardProp}><AiOutlineLeft /></IconButton>
-                <IconButton aria-label="Paginate right" onClick={goForwardProp}><AiOutlineRight /></IconButton>
+                <IconButton aria-label="Paginate left" onClick={goBackwardProp}>
+                  <AiOutlineLeft />
+                </IconButton>
+                <IconButton aria-label="Paginate right" onClick={goForwardProp}>
+                  <AiOutlineRight />
+                </IconButton>
               </HStack>
             </Flex>
             <HStack id="cardParent" gap={7}>
               {properties
                 .slice(
                   currentPageProp * cardsPerPage,
-                  (currentPageProp + 1) * cardsPerPage
+                  (currentPageProp + 1) * cardsPerPage,
                 )
                 .map((property) => (
                   <MyCard
@@ -150,15 +148,19 @@ function Home() {
               <Text fontSize="2xl">Your bookmarks </Text>
               <Spacer />
               <HStack>
-                <IconButton aria-label="Paginate left" onClick={goBackwardBook}><AiOutlineLeft /></IconButton>
-                <IconButton aria-label="Paginate right" onClick={goForwardBook}><AiOutlineRight /></IconButton>
+                <IconButton aria-label="Paginate left" onClick={goBackwardBook}>
+                  <AiOutlineLeft />
+                </IconButton>
+                <IconButton aria-label="Paginate right" onClick={goForwardBook}>
+                  <AiOutlineRight />
+                </IconButton>
               </HStack>
             </Flex>
             <HStack gap={7}>
               {bookmarkedProperties
                 .slice(
                   currentPageBook * cardsPerPage,
-                  (currentPageBook + 1) * cardsPerPage
+                  (currentPageBook + 1) * cardsPerPage,
                 )
                 .map((property) => (
                   <MyCard

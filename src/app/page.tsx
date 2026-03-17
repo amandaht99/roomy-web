@@ -14,10 +14,10 @@ import {
 } from "@chakra-ui/react";
 import { FaEuroSign, FaHome, FaGlobeAmericas, FaUsers } from "react-icons/fa";
 import Link from "next/link";
-import { useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { useUser } from "@clerk/nextjs";
+import { toaster } from "@/components/ui/toaster";
 
 // Framer motion variants for the animation
 const variants = {
@@ -25,24 +25,20 @@ const variants = {
   show: { opacity: 1 },
 };
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 // Page component is the landing page of the application
 export default function Page() {
-  const toast = useToast();
   const router = useRouter();
   const { isSignedIn } = useUser();
 
   // Handles the click event of the Join Roomy button
   const handleButtonClick = () => {
     if (isSignedIn) {
-      toast({
+      toaster.create({
         title: "You are already signed in.",
         description: "Redirecting to your home page.",
-        status: "info",
-        duration: 5000,
-        isClosable: true,
-        position: "top",
+        type: "info",
       });
       router.push("/home");
     } else {
@@ -71,7 +67,7 @@ export default function Page() {
             Why Choose Roomy?
           </Heading>
         </Stack>
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={10} mt={5}>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} gap={10} mt={5}>
           {[
             {
               title: "Cost-Effective Travel",
@@ -122,7 +118,7 @@ export default function Page() {
 
         <Button
           backgroundColor={"brand.900"}
-          textColor={"white"}
+          color={"white"}
           size="lg"
           onClick={handleButtonClick}
         >

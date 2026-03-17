@@ -1,5 +1,14 @@
 "use client";
-import { Steps, Box, Heading, Text, VStack, Image, Icon, Button, useToast } from "@chakra-ui/react";
+import {
+  Steps,
+  Box,
+  Heading,
+  Text,
+  VStack,
+  Image,
+  Icon,
+  Button,
+} from "@chakra-ui/react";
 import { FaMapMarkerAlt, FaTrash } from "react-icons/fa";
 import { motion } from "framer-motion";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
@@ -10,8 +19,9 @@ import FlatForm from "./upload-property-button";
 import { format, parseISO } from "date-fns";
 import { ChangeDateButton } from "./change-date-button";
 import { useAuth } from "@clerk/nextjs";
+import { toaster } from "@/components/ui/toaster";
 
-const MotionBox = motion(Box);
+const MotionBox = motion.create(Box);
 
 // Framer motion variants for the animation
 const variants = {
@@ -46,39 +56,29 @@ const PropertyInfo = () => {
     if (!userId) return;
 
     const response = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/flats/user/${userId}`
+      `${process.env.NEXT_PUBLIC_API_URL}/api/flats/user/${userId}`,
     );
     setProperty(response.data);
   }
-
-  const toast = useToast();
 
   // Function to delete the user's property
   const deleteFlat = async (property: Property) => {
     try {
       await axios.delete(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/flats/${property.id}`
+        `${process.env.NEXT_PUBLIC_API_URL}/api/flats/${property.id}`,
       );
       // If delete operation is successful, remove the property from the state
       setProperty(null);
 
-      toast({
+      toaster.success({
         title: "Flat deleted.",
         description: "Your flat has been successfully deleted.",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
       });
     } catch (error) {
       console.error("Failed to delete the flat:", error);
-      toast({
+      toaster.error({
         title: "Failed to delete flat.",
         description: "There was an error deleting your flat. Please try again.",
-        status: "error",
-        duration: 3000,
-        isClosable: true,
-        position: "top",
       });
     }
   };
@@ -159,16 +159,23 @@ const PropertyInfo = () => {
           </Text>
         </Box>
         <Text>
-          <Icon color="#F13B07" asChild><FaMapMarkerAlt /></Icon> {property.address.street}
-          , {property.address.city}
+          <Icon color="#F13B07" asChild>
+            <FaMapMarkerAlt />
+          </Icon>{" "}
+          {property.address.street}, {property.address.city}
         </Text>
         <Text fontStyle={"italic"}>{property.description}</Text>
         <Button
           backgroundColor={"brand.900"}
-          textColor={"white"}
+          color={"white"}
           variant="outline"
-          onClick={() => deleteFlat(property)}><Icon asChild><FaTrash /></Icon>Delete Flat
-                  </Button>
+          onClick={() => deleteFlat(property)}
+        >
+          <Icon asChild>
+            <FaTrash />
+          </Icon>
+          Delete Flat
+        </Button>
       </VStack>
     </MotionBox>
   );
