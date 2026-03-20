@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "../../../../../../db";
 import { clerkClient } from "@clerk/nextjs/server";
+import { auth } from "@clerk/nextjs/server";
 import { flats, addresses } from "../../../../../../db/schema";
 import { eq } from "drizzle-orm";
 import { withLogging } from "@/lib/withLogging";
@@ -53,7 +54,17 @@ async function handlePOST(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> },
 ) {
+  const { userId: authUserId } = await auth();
+  if (!authUserId) {
+    return NextResponse.json(
+      { error: "Authentication required" },
+      { status: 401 },
+    );
+  }
   const { userId } = await params;
+  if (authUserId !== userId) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
   logger.debug("Create flat request", { userId });
 
   const body = await request.json();
@@ -66,7 +77,7 @@ async function handlePOST(
 
     // Prepare flat data
     const flatToInsert = {
-      ownerId: userId,
+      ownerId: authUserId,
       description: body.description ?? null,
       squareMeters: body.squareMeters ?? null,
       rooms: body.rooms ?? null,
