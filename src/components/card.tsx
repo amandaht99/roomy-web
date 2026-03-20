@@ -2,6 +2,7 @@
 import {
   Steps,
   Card,
+  Box,
   Skeleton,
   Button,
   Text,
@@ -10,11 +11,13 @@ import {
   Spacer,
   Stack,
   HStack,
+  Image,
 } from "@chakra-ui/react";
 import { IoIosSwap } from "react-icons/io";
 import { AiTwotoneStar } from "react-icons/ai";
 import { BsDot, BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { Property } from "./property-info";
+import NoImagePlaceholder from "./no-image-placeholder";
 import { format, parseISO } from "date-fns";
 import { useState } from "react";
 import { toaster } from "@/components/ui/toaster";
@@ -32,6 +35,13 @@ export default function MyCard(props: MyCardProps) {
 
   const [isBookmarked, setBookmarked] = useState(false);
 
+  if (process.env.NODE_ENV === "development") {
+    console.log("Card property.images", {
+      id: property.id,
+      images: property.images,
+    });
+  }
+
   const handleBookmarkClick = () => {
     setBookmarked(!isBookmarked);
 
@@ -47,7 +57,7 @@ export default function MyCard(props: MyCardProps) {
       });
     } else {
       setBookmarkedProperties((prevProperties) =>
-        prevProperties.filter((p) => p.id !== property.id)
+        prevProperties.filter((p) => p.id !== property.id),
       );
 
       toaster.success({
@@ -61,13 +71,26 @@ export default function MyCard(props: MyCardProps) {
   return (
     <Card.Root w="sm" minWidth="sm">
       <Card.Body>
-        <Skeleton>
-          ≈
-          {/* <Image
-            src={property.images[0]}
-            alt="Flat image"
+        <Skeleton loading={false}>
+          <Box
+            w="100%"
             borderRadius="lg"
-          /> */}
+            overflow="hidden"
+            aspectRatio={16 / 9}
+          >
+            {property.images.length > 0 ? (
+              <Image
+                src={property.images[0]}
+                alt="Flat image"
+                h="100%"
+                w="100%"
+                objectFit="cover"
+                loading="lazy"
+              />
+            ) : (
+              <NoImagePlaceholder />
+            )}
+          </Box>
         </Skeleton>
         <Flex direction={"row"} mt="6" padding={"0px"} align={"stretch"}>
           <Stack>
@@ -76,13 +99,17 @@ export default function MyCard(props: MyCardProps) {
             </Text>
             <Flex>
               <HStack>
-                <Icon asChild><IoIosSwap /></Icon>
+                <Icon asChild>
+                  <IoIosSwap />
+                </Icon>
                 <Text fontSize={"15px"} data-cy="swap-city">
                   {property.swapWithCity}
                 </Text>
               </HStack>
               <Spacer />
-              <Icon asChild><BsDot /></Icon>
+              <Icon asChild>
+                <BsDot />
+              </Icon>
               <Spacer />
               <Text fontSize={"15px"}>
                 <span data-cy="date-from">
@@ -98,7 +125,9 @@ export default function MyCard(props: MyCardProps) {
           <Spacer />
           <Stack align={"end"}>
             <HStack>
-              <Icon asChild><AiTwotoneStar /></Icon>
+              <Icon asChild>
+                <AiTwotoneStar />
+              </Icon>
               <Text fontSize={"15px"}>4.71</Text>
             </HStack>
             {!showInBookmarks && (
@@ -110,8 +139,10 @@ export default function MyCard(props: MyCardProps) {
                 onClick={handleBookmarkClick}
                 data-cy="bookmark-button"
                 // This line is there to reflect the bookmarked state in the DOM
-                data-bookmarked={isBookmarked}>{isBookmarked ? <BsBookmarkFill /> : <BsBookmark />}Bookmark
-                              </Button>
+                data-bookmarked={isBookmarked}
+              >
+                {isBookmarked ? <BsBookmarkFill /> : <BsBookmark />}Bookmark
+              </Button>
             )}
           </Stack>
         </Flex>

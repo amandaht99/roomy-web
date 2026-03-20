@@ -23,11 +23,15 @@ export async function getAllFlats(userId: string) {
   }
 
   // Merge addresses into flats
-  return flatRows.map((flat) => ({
-    ...flat,
-    images: getFlatImagePublicUrls(flat.imagesPaths),
-    address: addressMap[flat.id] || null,
-  }));
+  return flatRows.map((flat) => {
+    const derivedImages = getFlatImagePublicUrls(flat.imagesPaths);
+
+    return {
+      ...flat,
+      images: derivedImages.length > 0 ? derivedImages : flat.images,
+      address: addressMap[flat.id] || null,
+    };
+  });
 }
 
 export async function putFlatDate(
@@ -64,9 +68,11 @@ export async function putFlatDate(
       .limit(1);
     const address = addressRows[0] ?? null;
 
+    const derivedImages = getFlatImagePublicUrls(flat.imagesPaths);
+
     return {
       ...flat,
-      images: getFlatImagePublicUrls(flat.imagesPaths),
+      images: derivedImages.length > 0 ? derivedImages : flat.images,
       address,
     };
   } catch (e) {

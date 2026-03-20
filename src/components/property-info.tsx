@@ -16,6 +16,7 @@ import { Carousel } from "react-responsive-carousel";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import FlatForm from "./upload-property-button";
+import NoImagePlaceholder from "./no-image-placeholder";
 import { format, parseISO } from "date-fns";
 import { ChangeDateButton } from "./change-date-button";
 import { useAuth } from "@clerk/nextjs";
@@ -28,6 +29,12 @@ const variants = {
   hidden: { opacity: 0 },
   show: { opacity: 1 },
 };
+
+function getImageFileName(imageUrl: string) {
+  const pathWithoutQuery = imageUrl.split("?")[0].split("#")[0];
+  const fileName = pathWithoutQuery.split("/").pop() || "image";
+  return decodeURIComponent(fileName);
+}
 
 export type Property = {
   id: number;
@@ -112,24 +119,37 @@ const PropertyInfo = () => {
     >
       <VStack align="start" gap={5}>
         <Carousel showThumbs={false}>
-          <Image
-            src={
-              "https://cdn.apartmenttherapy.info/image/upload/v1619013756/at/house%20tours/2021-04/Erin%20K/KERR-130-CLARKSON-2R-01-020577-EDIT-WEB.jpg"
-            }
-            alt={`Property1`}
-          />
-          <Image
-            src={
-              "https://www.mastrid.com/wp-content/uploads/2021/02/DepaSantaCatalina.jpg"
-            }
-            alt={`Property2`}
-          />
-          <Image
-            src={
-              "https://dom.com.cy/upload/resize_cache/iblock/7cb/870_654_2/7cb9955a62fb012942910a0882e3cadd.jpg"
-            }
-            alt={`Property3`}
-          />
+          {property.images.length > 0
+            ? property.images.map((image, index) => (
+                <Box
+                  key={`${image}-${index}`}
+                  w="100%"
+                  borderRadius="md"
+                  overflow="hidden"
+                  aspectRatio={4 / 3}
+                >
+                  <Image
+                    src={image}
+                    alt={`Property ${index + 1}`}
+                    title={getImageFileName(image)}
+                    loading="lazy"
+                    h="100%"
+                    w="100%"
+                    objectFit="cover"
+                  />
+                </Box>
+              ))
+            : [
+                <Box
+                  key="empty-image-placeholder"
+                  w="100%"
+                  aspectRatio={4 / 3}
+                  borderRadius="md"
+                  overflow="hidden"
+                >
+                  <NoImagePlaceholder />
+                </Box>,
+              ]}
         </Carousel>
         <Heading size="md" mb={2} fontWeight="bold">
           Availability:
