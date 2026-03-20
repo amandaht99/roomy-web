@@ -1,6 +1,7 @@
 "use client";
 
 import MyCard from "@/components/card";
+import CardSkeleton from "@/components/card-skeleton";
 import {
   Steps,
   Heading,
@@ -14,14 +15,18 @@ import {
   Stack,
   HStack,
   VStack,
+  Icon,
+  Button,
 } from "@chakra-ui/react";
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
+import { FaHome, FaRegBookmark } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
 import { Property } from "@/components/property-info";
 import { useProperties } from "@/context/properties-context";
 import { toaster } from "@/components/ui/toaster";
+import Link from "next/link";
 
 // Home component displays a list of properties and allows to paginate through them
 function Home() {
@@ -30,6 +35,8 @@ function Home() {
   const [currentPageProp, setCurrentPageProp] = useState(0);
   const [currentPageBook, setCurrentPageBook] = useState(0);
   const [cardsPerPage, setCardsPerPage] = useState(3);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasLoaded, setHasLoaded] = useState(false);
 
   useEffect(() => {
     const cardWidth = 384;
@@ -44,30 +51,61 @@ function Home() {
     [],
   );
 
-  const { userId } = useAuth();
+  const { userId, isLoaded } = useAuth();
 
   // Fetches properties data from the server
-  const fetchData = async () => {
-    const result = await axios.get(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/flats/all/${userId || null}`,
-    );
-    setFiltersApplied(false);
-    setProperties(result.data);
+  const fetchData = async (resolvedUserId: string) => {
+    setIsLoading(true);
+    try {
+      const result = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/flats/all/${resolvedUserId}`,
+      );
+      setFiltersApplied(false);
+      setProperties(result.data);
+      setHasLoaded(true);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        setProperties([]);
+        setHasLoaded(true);
+      } else {
+        setHasLoaded(false);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Removes filters and fetches all properties
   const removeFilters = async () => {
-    fetchData();
+    if (isLoaded && !userId) {
+      setProperties([]);
+      setIsLoading(false);
+      setHasLoaded(true);
+    } else if (userId) {
+      await fetchData(userId);
+    }
+
     toaster.success({
       title: "Filter removed.",
       description: "Showing all flats without filters.",
     });
   };
 
-  // Fetch data when component mounts
+  // Fetch data when auth state has resolved
   useEffect(() => {
-    fetchData();
-  }, []); // Empty array means this effect runs once when the component mounts
+    if (!isLoaded) {
+      return;
+    }
+
+    if (!userId) {
+      setProperties([]);
+      setIsLoading(false);
+      setHasLoaded(true);
+      return;
+    }
+
+    fetchData(userId);
+  }, [userId, isLoaded]);
 
   const goBackwardProp = () => {
     if (currentPageProp > 0) {
@@ -129,19 +167,46 @@ function Home() {
               </HStack>
             </Flex>
             <HStack id="cardParent" gap={7}>
-              {properties
-                .slice(
-                  currentPageProp * cardsPerPage,
-                  (currentPageProp + 1) * cardsPerPage,
-                )
-                .map((property) => (
-                  <MyCard
-                    property={property}
-                    key={property.id}
-                    setBookmarkedProperties={setBookmarkedProperties}
-                  />
-                ))}
+              {isLoading
+                ? Array.from({ length: 3 }).map((_, index) => (
+                    <CardSkeleton key={`card-skeleton-${index}`} />
+                  ))
+                : properties
+                    .slice(
+                      currentPageProp * cardsPerPage,
+                      (currentPageProp + 1) * cardsPerPage,
+                    )
+                    .map((property) => (
+                      <MyCard
+                        property={property}
+                        key={property.id}
+                        setBookmarkedProperties={setBookmarkedProperties}
+                      />
+                    ))}
             </HStack>
+            {hasLoaded && !isLoading && properties.length === 0 ? (
+              <VStack
+                align="start"
+                gap={3}
+                p={5}
+                borderWidth="1px"
+                borderColor="gray.200"
+                borderRadius="lg"
+                bg="white"
+                minHeight="280px"
+                justify="center"
+              >
+                <HStack>
+                  <Icon color="brand.900" asChild>
+                    <FaHome />
+                  </Icon>
+                  <Text fontWeight="semibold">No properties yet</Text>
+                </HStack>
+                <Button asChild backgroundColor="brand.900" color="white">
+                  <Link href="/profile">Go to Profile</Link>
+                </Button>
+              </VStack>
+            ) : null}
           </Stack>
           <Stack gap={1} padding={"20px"}>
             <Flex align={"stretch"}>
@@ -157,20 +222,45 @@ function Home() {
               </HStack>
             </Flex>
             <HStack gap={7}>
-              {bookmarkedProperties
-                .slice(
-                  currentPageBook * cardsPerPage,
-                  (currentPageBook + 1) * cardsPerPage,
-                )
-                .map((property) => (
-                  <MyCard
-                    key={property.id}
-                    property={property}
-                    setBookmarkedProperties={setBookmarkedProperties}
-                    showInBookmarks={true}
-                  />
-                ))}
+              {bookmarkedProperties.length > 0
+                ? bookmarkedProperties
+                    .slice(
+                      currentPageBook * cardsPerPage,
+                      (currentPageBook + 1) * cardsPerPage,
+                    )
+                    .map((property) => (
+                      <MyCard
+                        key={property.id}
+                        property={property}
+                        setBookmarkedProperties={setBookmarkedProperties}
+                        showInBookmarks={true}
+                      />
+                    ))
+                : null}
             </HStack>
+            {bookmarkedProperties.length === 0 ? (
+              <VStack
+                align="start"
+                gap={2}
+                p={5}
+                borderWidth="1px"
+                borderColor="gray.200"
+                borderRadius="lg"
+                bg="white"
+                minHeight="280px"
+                justify="center"
+              >
+                <HStack>
+                  <Icon color="brand.900" asChild>
+                    <FaRegBookmark />
+                  </Icon>
+                  <Text fontWeight="semibold">No bookmarks yet</Text>
+                </HStack>
+                <Text color="gray.600">
+                  Save the places you love and they will appear here.
+                </Text>
+              </VStack>
+            ) : null}
           </Stack>
         </Stack>
       </VStack>
