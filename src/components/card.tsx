@@ -69,7 +69,18 @@ export default function MyCard(props: MyCardProps) {
   };
 
   return (
-    <Card.Root w="sm" minWidth="sm">
+    <Card.Root
+      w="sm"
+      minWidth="sm"
+      backgroundColor="rgba(241, 59, 7, 0.04)"
+      transition="all 0.2s ease"
+      _hover={{
+        transform: "translateY(-2px)",
+        backgroundColor: "rgba(241, 59, 7, 0.08)",
+        boxShadow: "md",
+        cursor: "pointer",
+      }}
+    >
       <Card.Body>
         <Skeleton loading={false}>
           <Box
