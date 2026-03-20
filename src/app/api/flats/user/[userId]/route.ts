@@ -5,6 +5,7 @@ import { flats, addresses } from "../../../../../../db/schema";
 import { eq } from "drizzle-orm";
 import { withLogging } from "@/lib/withLogging";
 import { logger } from "@/lib/logger";
+import { getFlatImagePublicUrls } from "@/lib/supabase-server";
 
 async function handleGET(
   request: NextRequest,
@@ -38,7 +39,12 @@ async function handleGET(
   const client = await clerkClient();
   const user = await client.users.getUser(flat.ownerId);
 
-  return NextResponse.json({ ...flat, address, owner: user });
+  return NextResponse.json({
+    ...flat,
+    images: getFlatImagePublicUrls(flat.imagesPaths),
+    address,
+    owner: user,
+  });
 }
 
 export const GET = withLogging(handleGET, "GET /api/flats/user/[userId]");
@@ -53,24 +59,26 @@ async function handlePOST(
   const body = await request.json();
 
   try {
+    const rawImagePaths = Array.isArray(body.imagesPaths)
+      ? body.imagesPaths.filter((path: unknown) => typeof path === "string")
+      : [];
+    const imagePaths = rawImagePaths.slice(0, 3);
+
     // Prepare flat data
     const flatToInsert = {
       ownerId: userId,
       description: body.description ?? null,
       squareMeters: body.squareMeters ?? null,
       rooms: body.rooms ?? null,
-      images: body.images ?? [],
+      images: [] as string[],
       dateFrom: body.dateFrom ? new Date(body.dateFrom) : new Date(),
       dateTo: body.dateTo ? new Date(body.dateTo) : new Date(),
       swapWithCity: body.swapWithCity ?? "",
-      imagesPaths: body.imagesPaths ?? [],
-    } as const;
+      imagesPaths: imagePaths,
+    };
 
     // Insert flat
-    const inserted = await db
-      .insert(flats)
-      .values(flatToInsert)
-      .returning();
+    const inserted = await db.insert(flats).values(flatToInsert).returning();
 
     const createdFlat = inserted[0];
 
@@ -99,10 +107,21 @@ async function handlePOST(
 
     logger.info("Flat created", { flatId: createdFlat?.id, userId });
 
-    return NextResponse.json({ ...createdFlat, address, owner }, { status: 201 });
+    return NextResponse.json(
+      {
+        ...createdFlat,
+        images: getFlatImagePublicUrls(createdFlat.imagesPaths),
+        address,
+        owner,
+      },
+      { status: 201 },
+    );
   } catch (err) {
     logger.error("Failed to create flat", { error: err });
-    return NextResponse.json({ error: "Failed to create flat" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create flat" },
+      { status: 500 },
+    );
   }
 }
 

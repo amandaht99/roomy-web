@@ -1,6 +1,7 @@
 import { db } from "../../db";
 import { flats, addresses } from "../../db/schema";
 import { eq, ne, inArray } from "drizzle-orm";
+import { getFlatImagePublicUrls } from "@/lib/supabase-server";
 
 export async function getAllFlats(userId: string) {
   const flatRows = await db
@@ -24,6 +25,7 @@ export async function getAllFlats(userId: string) {
   // Merge addresses into flats
   return flatRows.map((flat) => ({
     ...flat,
+    images: getFlatImagePublicUrls(flat.imagesPaths),
     address: addressMap[flat.id] || null,
   }));
 }
@@ -62,7 +64,11 @@ export async function putFlatDate(
       .limit(1);
     const address = addressRows[0] ?? null;
 
-    return { ...flat, address };
+    return {
+      ...flat,
+      images: getFlatImagePublicUrls(flat.imagesPaths),
+      address,
+    };
   } catch (e) {
     // Record not found or other error
     return null;

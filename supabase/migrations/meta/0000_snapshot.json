@@ -1,0 +1,286 @@
+{
+  "id": "9d7d8257-f36b-4f19-ab21-627fe7eb30df",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.Address": {
+      "name": "Address",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "street": {
+          "name": "street",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "city": {
+          "name": "city",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "flatId": {
+          "name": "flatId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "flatId": {
+          "name": "flatId",
+          "columns": [
+            {
+              "expression": "flatId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "Address_flatId_Flat_id_fk": {
+          "name": "Address_flatId_Flat_id_fk",
+          "tableFrom": "Address",
+          "tableTo": "Flat",
+          "columnsFrom": [
+            "flatId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Address_flatId_unique": {
+          "name": "Address_flatId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "flatId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Flat": {
+      "name": "Flat",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "ownerId": {
+          "name": "ownerId",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "squareMeters": {
+          "name": "squareMeters",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "rooms": {
+          "name": "rooms",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "images": {
+          "name": "images",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "dateFrom": {
+          "name": "dateFrom",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dateTo": {
+          "name": "dateTo",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "swapWithCity": {
+          "name": "swapWithCity",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "imagesPaths": {
+          "name": "imagesPaths",
+          "type": "text[]",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'{}'"
+        }
+      },
+      "indexes": {
+        "ownerId": {
+          "name": "ownerId",
+          "columns": [
+            {
+              "expression": "ownerId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Flat_ownerId_unique": {
+          "name": "Flat_ownerId_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "ownerId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.Swap": {
+      "name": "Swap",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "state": {
+          "name": "state",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "swapperId": {
+          "name": "swapperId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "swappeeId": {
+          "name": "swappeeId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "Swap_swapperId_Flat_id_fk": {
+          "name": "Swap_swapperId_Flat_id_fk",
+          "tableFrom": "Swap",
+          "tableTo": "Flat",
+          "columnsFrom": [
+            "swapperId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "Swap_swappeeId_Flat_id_fk": {
+          "name": "Swap_swappeeId_Flat_id_fk",
+          "tableFrom": "Swap",
+          "tableTo": "Flat",
+          "columnsFrom": [
+            "swappeeId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "Swap_swapperId_swappeeId_key": {
+          "name": "Swap_swapperId_swappeeId_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "swapperId",
+            "swappeeId"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

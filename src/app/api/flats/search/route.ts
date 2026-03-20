@@ -4,6 +4,7 @@ import { flats, addresses } from "../../../../../db/schema";
 import { eq, and, lte, gte, inArray } from "drizzle-orm";
 import { withLogging } from "@/lib/withLogging";
 import { logger } from "@/lib/logger";
+import { getFlatImagePublicUrls } from "@/lib/supabase-server";
 
 async function handlePOST(request: NextRequest) {
   const body = await request.json();
@@ -67,6 +68,7 @@ async function handlePOST(request: NextRequest) {
     // Merge addresses into flats
     const flatData = flatRows.map((flat) => ({
       ...flat,
+      images: getFlatImagePublicUrls(flat.imagesPaths),
       address: addressMap[flat.id] || null,
     }));
 

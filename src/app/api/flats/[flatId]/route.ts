@@ -5,6 +5,7 @@ import { flats, addresses } from "../../../../../db/schema";
 import { eq } from "drizzle-orm";
 import { withLogging } from "@/lib/withLogging";
 import { logger } from "@/lib/logger";
+import { getFlatImagePublicUrls } from "@/lib/supabase-server";
 
 // export async function CREATE(
 //     request: NextRequest,
@@ -91,10 +92,19 @@ async function handleGET(
   if (flat.ownerId) {
     const client = await clerkClient();
     const user = await client.users.getUser(flat.ownerId);
-    return NextResponse.json({ ...flat, address, owner: user });
+    return NextResponse.json({
+      ...flat,
+      images: getFlatImagePublicUrls(flat.imagesPaths),
+      address,
+      owner: user,
+    });
   }
 
-  return NextResponse.json({ ...flat, address });
+  return NextResponse.json({
+    ...flat,
+    images: getFlatImagePublicUrls(flat.imagesPaths),
+    address,
+  });
 }
 
 export const GET = withLogging(handleGET, "GET /api/flats/[flatId]");
