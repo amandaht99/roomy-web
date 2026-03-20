@@ -7,6 +7,7 @@ import { eq } from "drizzle-orm";
 import { withLogging } from "@/lib/withLogging";
 import { logger } from "@/lib/logger";
 import { getFlatImagePublicUrls } from "@/lib/supabase-server";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 async function handleGET(
   request: NextRequest,
@@ -54,6 +55,16 @@ async function handlePOST(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> },
 ) {
+  const rateLimitResponse = enforceRateLimit(request, {
+    key: "post:/api/flats/user/[userId]",
+    limit: 5,
+    windowMs: 60_000,
+    message: "Too many flat creation requests from this IP.",
+  });
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   const { userId: authUserId } = await auth();
   if (!authUserId) {
     return NextResponse.json(

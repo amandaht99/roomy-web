@@ -9,6 +9,7 @@ import {
 } from "@/lib/supabase-server";
 import { withLogging } from "@/lib/withLogging";
 import { logger } from "@/lib/logger";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 const STORAGE_BUCKET = "flat-images";
 const MAX_FILES = 3;
@@ -45,6 +46,16 @@ function isSupportedImageMagicBytes(bytes: Uint8Array) {
 }
 
 async function handlePOST(request: NextRequest) {
+  const rateLimitResponse = enforceRateLimit(request, {
+    key: "post:/api/upload",
+    limit: 10,
+    windowMs: 60_000,
+    message: "Too many image upload requests from this IP.",
+  });
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   const { userId } = await auth();
   if (!userId) {
     return NextResponse.json(

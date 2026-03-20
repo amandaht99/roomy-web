@@ -5,8 +5,19 @@ import { eq, and, lte, gte, inArray } from "drizzle-orm";
 import { withLogging } from "@/lib/withLogging";
 import { logger } from "@/lib/logger";
 import { getFlatImagePublicUrls } from "@/lib/supabase-server";
+import { enforceRateLimit } from "@/lib/rateLimit";
 
 async function handlePOST(request: NextRequest) {
+  const rateLimitResponse = enforceRateLimit(request, {
+    key: "search:/api/flats/search",
+    limit: 30,
+    windowMs: 60_000,
+    message: "Too many search requests from this IP.",
+  });
+  if (rateLimitResponse) {
+    return rateLimitResponse;
+  }
+
   const body = await request.json();
   const filters = body?.filters;
   logger.debug("Search request received", { filters });
