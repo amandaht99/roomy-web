@@ -1,104 +1,176 @@
-# Roomy - Home Swapping Application
+# Roomy — Home Swap Platform
 
-![Alt text](/public/images/roomylogo.png)
+![Roomy Logo](/public/images/roomylogo.png)
 
-Roomy is a web application designed to connect individuals who wish to swap their homes for vacation purposes. The idea is simple: instead of spending money on hotels or Airbnb, users can swap their homes with each other, saving costs and immersing themselves in a new culture as locals, not tourists. Our motto is "Travel More, Spend Less".
+Roomy is a web application that connects people who want to swap homes for travel. Instead of paying for hotels or short-term rentals, users list their own property and browse others to arrange direct home exchanges. The idea: travel more, spend less, live like a local.
+
+> **Status:** In development. Core listing, search, and profile features are complete. Swap matching is planned but not yet built.
+
+---
 
 ## Table of Contents
 
-- [Project Description](#project-description)
+- [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Getting Started](#getting-started)
-- [Use Cases](#use-cases)
+- [Environment Variables](#environment-variables)
+- [Project Structure](#project-structure)
 
-## Project Description
+---
 
-Roomy is a platform where users can swap their homes with others for a specified period. The application aims to provide a cost-effective and authentic travel experience by allowing users to live like locals in a new city or country. It offers global access, a trusted community, and an alternative to expensive rentals.
+## Features
+
+**Currently implemented:**
+
+- User registration, login, and logout via Clerk
+- Create, edit, and delete your own property listing
+- Upload and delete property images
+- Set and update availability dates for your listing
+- Browse all available listings
+- Search and filter listings
+- Bookmark listings you're interested in
+- View individual listing detail pages
+
+**Planned:**
+
+- Swap request and matching system
+- In-app messaging between matched users
+- Swap history and status tracking
+
+---
 
 ## Tech Stack
 
-Roomy is built with the following technologies:
+| Layer          | Technology                         |
+| -------------- | ---------------------------------- |
+| Framework      | Next.js 15 (App Router)            |
+| Language       | TypeScript                         |
+| Authentication | Clerk (OAuth 2.0 / OpenID Connect) |
+| Database       | Supabase Postgres                  |
+| ORM            | Drizzle ORM                        |
+| File Storage   | Supabase Storage                   |
+| Deployment     | Vercel                             |
+| Styling        | Chakra UI + Framer Motion          |
 
-- [React](https://reactjs.org/) - A JavaScript library for building user interfaces
-- [Next.js](https://nextjs.org/) - A React framework for production-grade applications
-- [Chakra UI](https://chakra-ui.com/) - A simple, modular and accessible component library for React
-- [Framer Motion](https://www.framer.com/api/motion/) - A production-ready motion library for React
-- [Axios](https://axios-http.com/) - A promise-based HTTP client for the browser and node.js
-- [React Hook Form](https://react-hook-form.com/) - Efficient, flexible and extensible forms with easy-to-use validation
-- [React DatePicker](https://reactdatepicker.com/) - A simple and reusable datepicker component for React
-- [Clerk](https://clerk.dev/) - User authentication and management for developers
+---
 
 ## Architecture
 
-![Roomy web architechture diagram](/public/images/image.png)
+Roomy is a full-stack Next.js application with no separate backend server. API routes live inside the Next.js app under `src/app/api/` and are deployed as Vercel serverless functions.
+![Roomy web architechture diagram](/public/images/roomy_architecture_diagram.svg)
+
+```
+Browser
+   │
+   ▼
+Next.js App (Vercel)
+   ├── /app              → Pages and UI components
+   ├── /app/api          → API route handlers (serverless)
+   └── /lib              → Shared utilities (auth, rate limiting, logging)
+   │
+   ├──▶ Supabase Postgres   (via Drizzle ORM)
+   ├──▶ Supabase Storage    (property images)
+   └──▶ Clerk               (authentication)
+```
+
+---
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
-
 ### Prerequisites
 
-- Node.js and npm - Download and install [here](https://nodejs.org/en/download/).
+- Node.js 18+
+- A [Clerk](https://clerk.com) account
+- A [Supabase](https://supabase.com) project
 
-# Installation
+### Installation
 
-## 1. Get a local copy of the project
+**1. Clone the repository**
 
-Run `git clone https://github.com/amandaht99/roomy-web` in the folder where you want to clone the project.
+```bash
+git clone https://github.com/amandaht99/roomy-web
+cd roomy-web
+```
 
-## 1. Setup the Frontend
+**2. Install dependencies**
 
-Duplicate the `.env.example` file and rename it to `.env`
+```bash
+npm install
+```
 
-Run `npm i` to install all dependencies
+**3. Set up environment variables**
 
-Create a Clerk account and get the publishsble and the secret key and place them in the .env file
+Duplicate `.env.example` and rename it to `.env.local`:
 
-## 2. Setup the backend
+```bash
+cp .env.example .env.local
+```
 
-Run `git clone https://github.com/ZinoM21/roomy` in the folder where you want to setup the backend.
+Fill in the required values — see [Environment Variables](#environment-variables) below.
 
-Navigate to the server with `cd server`
+**4. Run database migrations**
 
-Duplicate the `.env.example` file and rename it to `.env`
+```bash
+npm run db:migrate
+```
 
-Run `bun i` to install all dependencies
+**5. Start the development server**
 
-## 3. Setup the database with a docker container
+```bash
+npm run dev
+```
 
-1. **Check if port 5432 is occupied:**
-      1. Check all running ports with `sudo lsof -i :5432`
-      2. Kill all ports that are shown with `sudo kill <PID>` </br> </br>
-2. Set **up the PostgreSQL Docker container:**
-      1. Make sure you have docker installed on your local machine.
-      2. Open a terminal or command prompt and run the following command to pull the PostgreSQL Docker image: **`docker pull postgres`**.
-      3. Once the image is downloaded, start a new container with the following command: **`docker run --name <DOCKERNAME> -e POSTGRES_PASSWORD=<YOURPASSWORD> -p 5432:5432 -d postgres`** </br> </br>
-      4. Check if the container is running using the command: **`docker ps`**.
-3. **Update Prisma Client to use the test database:**
-      1. Update the **`DATABASE_URL`** value in the backend's `.env` file to point to the new test database: **`DATABASE_URL=postgres://postgres:<YOURPASSWORD>@localhost:5432/postgres`** </br> </br>
-      2. Apply the migration to the new defined database: **`bunx prisma migrate dev`**.
-         1. this should generate a new prisma client, if it did not run **`npx prisma generate`**
-      3. If your server was running before, restart your server to pick up the new **`DATABASE_URL`** value. </br> </br>
-4. **_Optional:_ Setting up pgAdmin:**
-      1. Under Dashboard, in the “Quick Link” Section, click the "Add New Server" button to create a new server connection.
-      2. Enter a name for the server and switch to the "Connection" tab.
-      3. In the "Host name/address" field, enter **`localhost`**.
-      4. In the "Port" field, enter **`5432`**.
-      5. In the "Username" field, enter **`postgres`**.
-      6. In the "Password" field, enter the password you used when starting the container.
-      7. Click the "Save" button to save the server connection. You should now be able to see the new server listed in the pgAdmin dashboard </br> </br>
+The app will be available at `http://localhost:3000`.
 
-## 4. Start the project
+---
 
-1. Make sure your database is running in the docker container. </br> </br>
-2. Start the backend Elysia / Bun server by running `bun dev` in `roomy/server`</br> </br>
-3. Start the frontend NextJS server by running `npm run dev` in `roomy-web`
+## Environment Variables
 
-## Use Cases
+| Variable                            | Description                             |
+| ----------------------------------- | --------------------------------------- |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk publishable key (public)          |
+| `CLERK_SECRET_KEY`                  | Clerk secret key (server only)          |
+| `NEXT_PUBLIC_SUPABASE_URL`          | Supabase project URL                    |
+| `SUPABASE_SERVICE_ROLE_KEY`         | Supabase service role key (server only) |
+| `DATABASE_URL`                      | Postgres connection string              |
 
-- User registration and authentication
-- Listing and browsing of available homes
-- Filtered search of possible swaps
-- Requesting and managing home swaps
-- User profile and preferences management
+> Never commit `.env.local` or any file containing real credentials. All secrets are loaded from environment variables at runtime — no credentials are hardcoded in the source.
+
+---
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── flats/          # Listing CRUD, search, date management
+│   │   └── upload/         # Image upload handler
+│   └── ...                 # Pages and UI
+├── controllers/
+│   └── flats.ts            # Database query logic
+├── lib/
+│   ├── rateLimit.ts        # Per-IP rate limiting
+│   ├── withLogging.ts      # Request logging wrapper
+│   ├── logger.ts           # Structured logger
+│   └── supabase-server.ts  # Supabase client (server only)
+└── db/
+    └── schema.ts           # Drizzle ORM schema
+```
+
+---
+
+## Security
+
+A full threat model and security assessment is included in the repository documentation. Key measures implemented:
+
+- Route-level authentication via Clerk on all write operations
+- Ownership verification before any mutation or deletion
+- Magic byte validation on file uploads (not just MIME type headers)
+- Per-IP rate limiting on upload, search, and listing creation
+- Security headers configured globally (CSP, X-Frame-Options, etc.)
+- Parameterized queries via Drizzle ORM throughout
+- All secrets stored in environment variables — none hardcoded in source
+
+See `docs/threat-model.docx` for the full assessment.

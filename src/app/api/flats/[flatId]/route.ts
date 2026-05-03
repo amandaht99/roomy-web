@@ -5,7 +5,10 @@ import { flats, addresses } from "../../../../../db/schema";
 import { eq } from "drizzle-orm";
 import { withLogging } from "@/lib/withLogging";
 import { logger } from "@/lib/logger";
-import { getFlatImagePublicUrls } from "@/lib/supabase-server";
+import {
+  getFlatImagePublicUrls,
+  getSupabaseServerClient,
+} from "@/lib/supabase-server";
 
 // export async function CREATE(
 //     request: NextRequest,
@@ -129,7 +132,11 @@ async function handleDELETE(
   }
 
   const flatRows = await db
-    .select({ id: flats.id, ownerId: flats.ownerId })
+    .select({
+      id: flats.id,
+      ownerId: flats.ownerId,
+      imagesPaths: flats.imagesPaths,
+    })
     .from(flats)
     .where(eq(flats.id, parsedFlatId))
     .limit(1);
@@ -141,6 +148,22 @@ async function handleDELETE(
 
   if (flat.ownerId !== userId) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  const supabase = getSupabaseServerClient();
+  if (flat.imagesPaths.length > 0) {
+    const { error: storageError } = await supabase
+      .storage
+      .from("flat-images")
+      .remove(flat.imagesPaths);
+
+    if (storageError) {
+      logger.warn("Failed to remove flat images from storage", {
+        flatId: parsedFlatId,
+        imagesPaths: flat.imagesPaths,
+        error: storageError,
+      });
+    }
   }
 
   await db.delete(flats).where(eq(flats.id, parsedFlatId));
